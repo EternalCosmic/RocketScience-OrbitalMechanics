@@ -107,3 +107,323 @@
         .slide-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .slide-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .slide-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .slide-bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slide-bullet-list li {
+            position: relative;
+            padding-left: 16px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .slide-bullet-list li::before {
+            content: "•";
+            color: var(--accent-blue);
+            font-weight: bold;
+            font-size: 1rem;
+            position: absolute;
+            left: 0;
+            top: -1px;
+        }
+
+        .center-sandbox-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        canvas.sim-canvas {
+            width: 100%;
+            height: 320px;
+            background: #02040a;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        .readout-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+
+        .readout-card {
+            background: #060a14;
+            border: 1px solid var(--card-border);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .readout-val {
+            font-family: monospace;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .readout-lbl {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .controls-row {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(255,255,255,0.02);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .speaker-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--card-border);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand-title">Rocket Science & Orbital Mechanics Deck</div>
+        <div class="nav-controls">
+            <button class="nav-btn active">Slide Deck View</button>
+            <button class="nav-btn">Live Orbit Sandbox</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+
+        <!-- Left Column -->
+        <div class="dash-column">
+            <!-- Slide 1 -->
+            <div class="slide-card">
+                <div class="slide-tag"><span>Slide 1</span><span>Title Slide</span></div>
+                <h2 class="slide-title">Rocket Science & Orbital Mechanics</h2>
+                <p style="color: var(--accent-blue); font-size: 0.85rem;">How Rockets Reach Space and Stay in Orbit</p>
+                <div style="font-weight: bold; margin-top: 4px; font-size: 0.9rem;">Katie Carlson</div>
+                <div style="color: var(--text-muted); font-size: 0.8rem;">Command & Data Handling Engineer, NASA L'SPACE Academy</div>
+            </div>
+
+            <!-- Slide 3 & 4 Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="slide-card" style="padding: 12px;">
+                    <div class="slide-tag">Slide 3</div>
+                    <div style="font-size: 0.8rem; font-weight: bold;">Definition of Space</div>
+                    <p style="font-size: 0.7rem; color: var(--text-muted);">The Kármán Line (100 km) atmospheric boundary.</p>
+                </div>
+                <div class="slide-card" style="padding: 12px;">
+                    <div class="slide-tag">Slide 4</div>
+                    <div style="font-size: 0.8rem; font-weight: bold;">Newton's Third Law</div>
+                    <p style="font-size: 0.7rem; color: var(--text-muted);">Action & Reaction thrust dynamics in vacuum.</p>
+                </div>
+            </div>
+
+            <!-- Slide 5 & 6 -->
+            <div class="slide-card">
+                <div class="slide-tag">Slide 5: Rocket Dynamics</div>
+                <ul class="slide-bullet-list">
+                    <li><strong>Tsiolkovsky's Rocket Equation:</strong> Exponential fuel growth for linear gains.</li>
+                    <li><strong>Mass Ratio:</strong> 90% propellant, 9% structure, 1% payload.</li>
+                </ul>
+            </div>
+
+            <div class="slide-card">
+                <div class="slide-tag">Slide 6: Orbital Mechanics</div>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">An orbit is falling constantly around Earth without hitting it.</p>
+            </div>
+        </div>
+
+        <!-- Center Column: Sandbox -->
+        <div class="dash-column">
+            <div class="center-sandbox-card">
+                <div class="slide-tag">Slide 8: Live Demonstration Sandbox</div>
+                
+                <canvas id="orbitalSandboxCanvas" class="sim-canvas"></canvas>
+
+                <div class="controls-row">
+                    <input type="range" id="altSlider" min="160" max="35786" value="400" oninput="updateOrbitPhysics()">
+                    <div class="btn-group">
+                        <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(0.2)">Prograde (+Δv)</button>
+                        <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(-0.2)">Retrograde (-Δv)</button>
+                    </div>
+                </div>
+
+                <div class="readout-grid">
+                    <div class="readout-card">
+                        <div class="readout-val" id="valVel">7.67 km/s</div>
+                        <div class="readout-lbl">Orbital Speed</div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="readout-val" id="valAlt">400 km</div>
+                        <div class="readout-lbl">Altitude</div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="readout-val" id="valPeriod">92.4 min</div>
+                        <div class="readout-lbl">Orbital Period</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="dash-column">
+            <!-- Slide 2: Speaker Profile -->
+            <div class="slide-card">
+                <div class="slide-tag"><span>Slide 2</span><span>IMG_0782.jpeg</span></div>
+                <img src="IMG_0782.jpeg" alt="Katie Carlson" class="speaker-img">
+                <h3 style="font-size: 1.1rem; color: #fff;">About Katie Carlson</h3>
+                <ul class="slide-bullet-list">
+                    <li>Computer Science major in Space Systems.</li>
+                    <li>Lead C&DH Engineer for Team 15, NASA L'SPACE.</li>
+                    <li>Sanskrit student & certified yoga instructor.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 7 -->
+            <div class="slide-card">
+                <div class="slide-tag">Slide 7: Orbital Speeds</div>
+                <ul class="slide-bullet-list">
+                    <li><strong>LEO Velocity:</strong> ~17,500 mph (7.8 km/s).</li>
+                    <li><strong>Period:</strong> Orbits Earth once every 90 minutes.</li>
+                </ul>
+            </div>
+
+            <!-- Slide 9 -->
+            <div class="slide-card">
+                <div class="slide-tag">Slide 9: Q&A & Wrap Up</div>
+                <p style="font-style: italic; font-size: 0.8rem; color: var(--accent-blue);">"The sky is not the limit; it is the starting point."</p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Rocket Science & Orbital Mechanics Webinar Companion • Katie Carlson • NASA L'SPACE Academy</p>
+    </footer>
+
+    <script>
+        const sandboxCanvas = document.getElementById('orbitalSandboxCanvas');
+        const sCtx = sandboxCanvas.getContext('2d');
+        sandboxCanvas.width = sandboxCanvas.parentElement.clientWidth - 40;
+        sandboxCanvas.height = 320;
+
+        let orbitAngle = 0;
+        let altKm = 400;
+        let deltaVBoost = 0;
+
+        function updateOrbitPhysics() {
+            altKm = parseFloat(document.getElementById('altSlider').value);
+            let G = 6.674e-11;
+            let M = 5.972e24;
+            let r = (6371 + altKm) * 1000;
+            let v = Math.sqrt((G * M) / r) / 1000 + deltaVBoost;
+            let periodSec = 2 * Math.PI * Math.sqrt(Math.pow(r, 3) / (G * M));
+
+            document.getElementById('valVel').innerText = v.toFixed(2) + " km/s";
+            document.getElementById('valAlt').innerText = Math.round(altKm) + " km";
+            document.getElementById('valPeriod').innerText = (periodSec / 60).toFixed(1) + " min";
+        }
+
+        function applyDeltaV(amount) {
+            deltaVBoost += amount;
+            updateOrbitPhysics();
+        }
+
+        function renderSandbox() {
+            sCtx.fillStyle = '#02040a';
+            sCtx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
+
+            let cx = sandboxCanvas.width / 2;
+            let cy = sandboxCanvas.height / 2;
+
+            sCtx.beginPath();
+            sCtx.arc(cx, cy, 40, 0, Math.PI * 2);
+            sCtx.fillStyle = '#0284c7';
+            sCtx.fill();
+            sCtx.strokeStyle = '#38bdf8';
+            sCtx.lineWidth = 2;
+            sCtx.stroke();
+
+            let orbRadius = 40 + (altKm / 35786) * 90 + 25;
+
+            sCtx.beginPath();
+            sCtx.arc(cx, cy, orbRadius, 0, Math.PI * 2);
+            sCtx.strokeStyle = 'rgba(0, 210, 255, 0.4)';
+            sCtx.lineWidth = 1.5;
+            sCtx.setLineDash([4, 4]);
+            sCtx.stroke();
+            sCtx.setLineDash([]);
+
+            let satX = cx + Math.cos(orbitAngle) * orbRadius;
+            let satY = cy + Math.sin(orbitAngle) * orbRadius;
+
+            sCtx.fillStyle = '#38ef7d';
+            sCtx.beginPath();
+            sCtx.arc(satX, satY, 5, 0, Math.PI * 2);
+            sCtx.fill();
+
+            orbitAngle += 0.015;
+            requestAnimationFrame(renderSandbox);
+        }
+
+        updateOrbitPhysics();
+        renderSandbox();
+    </script>
+</body>
+</html>
