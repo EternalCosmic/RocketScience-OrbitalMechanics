@@ -77,6 +77,7 @@
             cursor: pointer;
             transition: transform 0.2s ease, border-color 0.2s ease;
             position: relative;
+            user-select: none;
         }
 
         .slide-card:hover {
@@ -120,18 +121,26 @@
             justify-content: center;
             position: relative;
             min-height: 350px;
+            pointer-events: none; /* Let click pass to slide card */
         }
 
         .slide-media img { width: 100%; height: 100%; object-fit: contain; }
 
-        .slide-content { padding: 32px; display: flex; flex-direction: column; justify-content: center; }
+        .slide-content { 
+            padding: 32px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            pointer-events: none; /* Let click pass to slide card */
+        }
+        
         .slide-tag { font-size: 0.8rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
         .slide-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 16px; color: #fff; }
         .slide-bullet-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
         .slide-bullet-list li { position: relative; padding-left: 20px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         .slide-bullet-list li::before { content: "•"; color: var(--accent-blue); font-weight: bold; font-size: 1.2rem; position: absolute; left: 0; top: -2px; }
 
-        .sandbox-container { grid-column: 1 / -1; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+        .sandbox-container { grid-column: 1 / -1; padding: 24px; display: flex; flex-direction: column; gap: 20px; pointer-events: auto; }
         .sandbox-controls {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -287,8 +296,8 @@
         </div>
 
         <!-- Slide 8: Interactive Orbital Sandbox -->
-        <div class="slide-card" id="simulator">
-            <div class="slide-media" style="grid-column: 1 / -1; min-height: auto;">
+        <div class="slide-card" id="simulator" style="cursor: default;">
+            <div class="slide-media" style="grid-column: 1 / -1; min-height: auto; pointer-events: auto;">
                 <div class="sandbox-container">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <span class="slide-tag">Slide 8: Interactive Orbit & Maneuver Simulator</span>
@@ -551,68 +560,4 @@
             document.getElementById('valApo').innerText = Math.round(apoapsisKm) + " km";
             document.getElementById('valEcc').innerText = eccentricity.toFixed(3);
             document.getElementById('valInc').innerText = inclinationDeg.toFixed(1) + "°";
-            document.getElementById('valPeriod').innerText = (periodSec / 60).toFixed(1) + " min";
-        }
-
-        function renderSandbox() {
-            sCtx.fillStyle = '#02040a';
-            sCtx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
-
-            let cx = sandboxCanvas.width / 2;
-            let cy = sandboxCanvas.height / 2;
-
-            sCtx.beginPath();
-            sCtx.arc(cx, cy, 45, 0, Math.PI * 2);
-            sCtx.fillStyle = '#0284c7'; sCtx.fill();
-            sCtx.strokeStyle = '#38bdf8'; sCtx.lineWidth = 3; sCtx.stroke();
-
-            let r_p = (R_Earth + periapsisKm);
-            let a = r_p / (1 - eccentricity);
-            let scale = 110 / 35786; 
-
-            let pxApo = a * (1 + eccentricity) * scale + 45;
-            let pxPeri = r_p * scale + 45;
-            let semiMajorPx = (pxApo + pxPeri) / 2;
-            let semiMinorPx = semiMajorPx * Math.sqrt(1 - eccentricity * eccentricity);
-            let cPx = semiMajorPx - pxPeri; 
-
-            let incRad = (inclinationDeg * Math.PI) / 180;
-            let yCompress = Math.cos(incRad);
-
-            sCtx.save();
-            sCtx.translate(cx - cPx, cy);
-            sCtx.scale(1, yCompress);
-
-            sCtx.beginPath();
-            sCtx.ellipse(0, 0, semiMajorPx, semiMinorPx, 0, 0, Math.PI * 2);
-            sCtx.strokeStyle = inHohmann ? '#9d4edd' : 'rgba(0, 210, 255, 0.5)';
-            sCtx.lineWidth = inHohmann ? 2.5 : 1.5;
-            sCtx.setLineDash(inHohmann ? [6, 4] : [4, 4]);
-            sCtx.stroke();
-            sCtx.setLineDash([]);
-            sCtx.restore();
-
-            let trueAnomaly = orbitAngle;
-            let r_current = (a * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(trueAnomaly));
-            let r_px = r_current * scale + 45;
-
-            let satX = cx - cPx + r_px * Math.cos(trueAnomaly);
-            let satY = cy + (r_px * Math.sin(trueAnomaly)) * yCompress;
-
-            sCtx.fillStyle = inHohmann ? '#ff9f43' : '#38ef7d';
-            sCtx.beginPath();
-            sCtx.arc(satX, satY, 6, 0, Math.PI * 2);
-            sCtx.fill();
-
-            if (!isPaused) {
-                let speed = 0.012 * Math.pow(a / (R_Earth + 400), -1.2);
-                orbitAngle += speed;
-            }
-
-            requestAnimationFrame(renderSandbox);
-        }
-        updateTelemetry();
-        renderSandbox();
-    </script>
-</body>
-</html>
+            document.getElementById('valPeriod').innerText = (periodSec / 6
