@@ -411,9 +411,11 @@
     </footer>
 
     <script>
-        function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+        function scrollToSection(id) { 
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); 
+        }
 
-        // Modal Handler
+        // Modal Lightbox Presenter
         function openSlideModal(card, slideNum) {
             const overlay = document.getElementById('lightboxOverlay');
             const mediaBox = document.getElementById('modalMediaContainer');
@@ -520,94 +522,4 @@
             inHohmann = true;
             periapsisKm = 400;
             eccentricity = 0.55;
-            document.getElementById('altSlider').value = 400;
-            document.getElementById('eccSlider').value = 0.55;
-            updateTelemetry();
-        }
-
-        function updateTelemetry() {
-            let r_p = (R_Earth + periapsisKm) * 1000;
-            let a = r_p / (1 - eccentricity);
-            let r_a = a * (1 + eccentricity);
-            let apoapsisKm = (r_a / 1000) - R_Earth;
-
-            let v_p = Math.sqrt((G * M) * ((2 / r_p) - (1 / a))) / 1000 + deltaVBoost;
-            let periodSec = 2 * Math.PI * Math.sqrt(Math.pow(a, 3) / (G * M));
-
-            document.getElementById('valVel').innerText = v_p.toFixed(2) + " km/s";
-            document.getElementById('valAlt').innerText = Math.round(periapsisKm) + " km";
-            document.getElementById('valApo').innerText = Math.round(apoapsisKm) + " km";
-            document.getElementById('valEcc').innerText = eccentricity.toFixed(3);
-            document.getElementById('valInc').innerText = inclinationDeg.toFixed(1) + "°";
-            document.getElementById('valPeriod').innerText = (periodSec / 60).toFixed(1) + " min";
-        }
-
-        function renderSandbox() {
-            sCtx.fillStyle = '#02040a';
-            sCtx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
-
-            let cx = sandboxCanvas.width / 2;
-            let cy = sandboxCanvas.height / 2;
-
-            // Draw Central Earth Body
-            sCtx.beginPath();
-            sCtx.arc(cx, cy, 45, 0, Math.PI * 2);
-            sCtx.fillStyle = '#0284c7'; 
-            sCtx.fill();
-            sCtx.strokeStyle = '#38bdf8'; 
-            sCtx.lineWidth = 3; 
-            sCtx.stroke();
-
-            let r_p = (R_Earth + periapsisKm);
-            let a = r_p / (1 - eccentricity);
-            let scale = 110 / 35786; 
-
-            let pxApo = a * (1 + eccentricity) * scale + 45;
-            let pxPeri = r_p * scale + 45;
-            let semiMajorPx = (pxApo + pxPeri) / 2;
-            let semiMinorPx = semiMajorPx * Math.sqrt(1 - eccentricity * eccentricity);
-            let cPx = semiMajorPx - pxPeri; 
-
-            let incRad = (inclinationDeg * Math.PI) / 180;
-            let yCompress = Math.cos(incRad);
-
-            // Orbit Path
-            sCtx.save();
-            sCtx.translate(cx - cPx, cy);
-            sCtx.scale(1, yCompress);
-
-            sCtx.beginPath();
-            sCtx.ellipse(0, 0, semiMajorPx, semiMinorPx, 0, 0, Math.PI * 2);
-            sCtx.strokeStyle = inHohmann ? '#9d4edd' : 'rgba(0, 210, 255, 0.5)';
-            sCtx.lineWidth = inHohmann ? 2.5 : 1.5;
-            sCtx.setLineDash(inHohmann ? [6, 4] : [4, 4]);
-            sCtx.stroke();
-            sCtx.setLineDash([]);
-            sCtx.restore();
-
-            // Satellite Position
-            let trueAnomaly = orbitAngle;
-            let r_current = (a * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(trueAnomaly));
-            let r_px = r_current * scale + 45;
-
-            let satX = cx - cPx + r_px * Math.cos(trueAnomaly);
-            let satY = cy + (r_px * Math.sin(trueAnomaly)) * yCompress;
-
-            sCtx.fillStyle = inHohmann ? '#ff9f43' : '#38ef7d';
-            sCtx.beginPath();
-            sCtx.arc(satX, satY, 6, 0, Math.PI * 2);
-            sCtx.fill();
-
-            if (!isPaused) {
-                let speed = 0.012 * Math.pow(a / (R_Earth + 400), -1.2);
-                orbitAngle += speed;
-            }
-
-            requestAnimationFrame(renderSandbox);
-        }
-
-        updateTelemetry();
-        renderSandbox();
-    </script>
-</body>
-</html>
+            document.getElementById('altSlider
