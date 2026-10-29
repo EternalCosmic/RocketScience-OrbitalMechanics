@@ -3,406 +3,462 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interstellar & Solar System Landing Simulator</title>
+  <title>NASA Eyes Style Interstellar Simulator</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: #010204;
-      color: #00ffcc;
-      font-family: 'Courier New', Courier, monospace;
+      background-color: #020408;
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
       height: 100vh;
-      width: 100vw;
     }
 
-    #sim-container {
+    /* NASA Style Floating Top Bar */
+    nav {
+      background: rgba(10, 15, 26, 0.75);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-title::before {
+      content: "•";
+      color: #ef4444;
+      font-size: 1.5rem;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .nav-btn {
+      background: rgba(14, 116, 144, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      color: #38bdf8;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover { background: #0284c7; color: #fff; box-shadow: 0 0 12px rgba(56,189,248,0.5); }
+
+    #simulator-container {
       position: relative;
-      width: 100%;
-      height: 100%;
+      flex: 1;
+      width: 100vw;
+      background: #020408;
+      overflow: hidden;
     }
 
-    canvas#webgl-canvas {
+    canvas#space-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       z-index: 1;
     }
 
-    .cockpit-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 2;
-      pointer-events: none;
-      box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.95);
-      border: 24px solid #0f131a;
-    }
-
+    /* Glassmorphism HUD Panels */
     .hud-layer {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       z-index: 3;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 28px;
+      padding: 24px;
       pointer-events: none;
     }
 
-    .hud-title {
-      text-align: center;
-      font-size: 1.2rem;
-      letter-spacing: 3px;
-      text-shadow: 0 0 10px #00ffcc;
-      background: rgba(4, 12, 20, 0.75);
-      padding: 10px 20px;
-      border-radius: 6px;
-      align-self: center;
-      border: 1px solid rgba(0, 255, 204, 0.4);
-    }
-
     .hud-panels {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 320px 1fr 300px;
+      gap: 20px;
       align-items: flex-end;
-      width: 100%;
     }
 
     .panel {
-      background: rgba(6, 14, 24, 0.88);
-      border: 1px solid #00ffcc;
-      padding: 18px 22px;
-      border-radius: 8px;
+      background: rgba(11, 18, 33, 0.65);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 18px;
+      border-radius: 12px;
       pointer-events: auto;
-      backdrop-filter: blur(8px);
-      min-width: 280px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     }
 
     .panel h3 {
-      font-size: 0.85rem;
-      margin-bottom: 10px;
-      color: #ffffff;
-      border-bottom: 1px solid #00ffcc;
-      padding-bottom: 4px;
-      letter-spacing: 1px;
+      font-size: 0.75rem;
+      margin-bottom: 12px;
+      color: #94a3b8;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 6px;
     }
 
-    .metric {
-      font-size: 1.1rem;
-      font-weight: bold;
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
       margin-bottom: 8px;
-      color: #00ffcc;
+      font-size: 0.85rem;
+    }
+
+    .metric-val {
+      font-weight: 600;
+      color: #38bdf8;
+      font-family: monospace;
     }
 
     .control-btn {
-      background: #002b26;
-      color: #00ffcc;
-      border: 1px solid #00ffcc;
-      padding: 9px 14px;
+      background: rgba(15, 23, 42, 0.8);
+      color: #f1f5f9;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 10px 14px;
       margin: 5px 0;
       cursor: pointer;
       width: 100%;
+      border-radius: 6px;
       font-family: inherit;
-      font-weight: bold;
-      border-radius: 4px;
-      transition: all 0.2s ease-in-out;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .control-btn:hover {
-      background: #00ffcc;
-      color: #000000;
-      box-shadow: 0 0 12px #00ffcc;
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38bdf8;
+      color: #38bdf8;
     }
 
     select.target-select {
       width: 100%;
-      padding: 8px;
-      background: #001f1c;
-      color: #00ffcc;
-      border: 1px solid #00ffcc;
-      margin-bottom: 12px;
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      padding: 10px;
       font-family: inherit;
-      border-radius: 4px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      outline: none;
     }
 
-    optgroup {
-      background: #04121a;
-      color: #ffffff;
+    .spec-box {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 10px;
+    }
+
+    /* Reticle Indicator */
+    .reticle-overlay {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 220px; height: 220px;
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+      border-radius: 50%;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
   </style>
-
-  <!-- Three.js CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-<div id="sim-container">
-  <canvas id="webgl-canvas"></canvas>
-  <div class="cockpit-overlay"></div>
+<nav>
+  <div class="brand-title">NASA EYES SIMULATION ENGINE • Astra Deck</div>
+  <a href="index.html" class="nav-btn">← Back to Presentation</a>
+</nav>
+
+<div id="simulator-container">
+  <canvas id="space-canvas"></canvas>
+  <div class="reticle-overlay" id="reticle"></div>
 
   <div class="hud-layer">
-    <div class="hud-title">SOLAR SYSTEM &amp; DEEP SPACE NAVIGATION</div>
+    <div style="text-align: center; pointer-events: none;">
+      <div id="status-banner" style="font-size: 0.85rem; letter-spacing: 2px; color: #38bdf8; text-transform: uppercase;">
+        ORBITAL TRACKING ACTIVE • REAL-TIME RENDER
+      </div>
+    </div>
 
     <div class="hud-panels">
-      <!-- Flight Telemetry -->
+      <!-- Telemetry Panel -->
       <div class="panel">
-        <h3>FLIGHT TELEMETRY</h3>
-        <div>ACTIVE SYSTEM:</div>
-        <div class="metric" id="target-name">Earth</div>
-        <div>FLIGHT MODE:</div>
-        <div class="metric" id="flight-mode">ORBITAL</div>
-        <div>ALTITUDE / DISTANCE:</div>
-        <div class="metric" id="alt-val">400.0 km</div>
-        <div>VELOCITY:</div>
-        <div class="metric" id="speed-val">7.68 km/s</div>
+        <h3>Target Telemetry</h3>
+        <div class="metric-row"><span>BODY:</span> <span class="metric-val" id="target-name">Earth</span></div>
+        <div class="metric-row"><span>VIEW MODE:</span> <span class="metric-val" id="flight-mode">ORBITAL</span></div>
+        <div class="metric-row"><span>ALTITUDE:</span> <span class="metric-val" id="alt-val">400.0 km</span></div>
+        <div class="metric-row"><span>VELOCITY:</span> <span class="metric-val" id="speed-val">24.10 km/s</span></div>
+        
+        <div class="spec-box" id="spec-text">
+          Nitrogen-oxygen atmosphere with active ocean currents.
+        </div>
       </div>
 
-      <!-- Navigation & Flight Commands -->
+      <div></div>
+
+      <!-- Selector Panel -->
       <div class="panel">
-        <h3>CELESTIAL DESTINATION</h3>
-        <select id="destination" class="target-select" onchange="changeDestination(this.value)">
-          <optgroup label="Inner Planets & Moon">
+        <h3>Destination Selector</h3>
+        <select class="target-select" id="destinationSelect" onchange="changeTarget()">
+          <optgroup label="Inner Solar System">
             <option value="Mercury">Mercury</option>
             <option value="Venus">Venus</option>
             <option value="Earth" selected>Earth</option>
-            <option value="Luna">Luna (Earth's Moon)</option>
+            <option value="Luna">Luna (Earth Moon)</option>
             <option value="Mars">Mars</option>
+            <option value="Phobos">Phobos</option>
+            <option value="Deimos">Deimos</option>
           </optgroup>
-          <optgroup label="Martian Moons">
-            <option value="Phobos">Phobos (Mars)</option>
-            <option value="Deimos">Deimos (Mars)</option>
-          </optgroup>
-          <optgroup label="Gas Giants">
+          <optgroup label="Outer Solar System">
             <option value="Jupiter">Jupiter</option>
+            <option value="Io">Io</option>
+            <option value="Europa">Europa</option>
+            <option value="Ganymede">Ganymede</option>
+            <option value="Callisto">Callisto</option>
             <option value="Saturn">Saturn</option>
-          </optgroup>
-          <optgroup label="Jovian Moons">
-            <option value="Io">Io (Jupiter)</option>
-            <option value="Europa">Europa (Jupiter)</option>
-            <option value="Ganymede">Ganymede (Jupiter)</option>
-            <option value="Callisto">Callisto (Jupiter)</option>
-          </optgroup>
-          <optgroup label="Saturnian Moons">
-            <option value="Titan">Titan (Saturn)</option>
-            <option value="Enceladus">Enceladus (Saturn)</option>
-          </optgroup>
-          <optgroup label="Ice Giants">
+            <option value="Titan">Titan</option>
+            <option value="Enceladus">Enceladus</option>
             <option value="Uranus">Uranus</option>
             <option value="Neptune">Neptune</option>
           </optgroup>
-          <optgroup label="Outer Moons">
-            <option value="Triton">Triton (Neptune)</option>
-          </optgroup>
           <optgroup label="Deep Space">
-            <option value="Andromeda">Andromeda Sector</option>
+            <option value="Andromeda">Andromeda (M31)</option>
+            <option value="Triangulum">Triangulum (M33)</option>
           </optgroup>
         </select>
-        <button class="control-btn" onclick="toggleWarp()">[ Interstellar Warp Drive ]</button>
-        <button class="control-btn" onclick="initiateLanding()">[ Initiate Surface Landing ]</button>
-        <button class="control-btn" onclick="returnToOrbit()">[ Ascent to Orbit ]</button>
+
+        <button class="control-btn" onclick="toggleWarp()"><span>Warp Approach</span> <span>🚀</span></button>
+        <button class="control-btn" onclick="initiateLanding()"><span>Atmospheric Entry</span> <span>🛬</span></button>
+        <button class="control-btn" onclick="ascentToOrbit()"><span>Ascent to Orbit</span> <span>🛰️</span></button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  let scene, camera, renderer, starfield;
-  let currentBody, ringMesh;
-  
-  // Simulation State
-  let currentTarget = 'Earth';
-  let mode = 'ORBITAL'; 
-  let altitude = 400.0;
-  let speed = 7.68;
-  let descentInterval = null;
+  const canvas = document.getElementById('space-canvas');
+  const ctx = canvas.getContext('2d');
 
-  // Celestial Objects Database
-  const targetSpecs = {
-    Mercury:   { color: 0xaaaaaa, size: 2.2, orbitAlt: 200,  orbitSpeed: 3.00, hasRings: false },
-    Venus:     { color: 0xe3bb76, size: 3.8, orbitAlt: 300,  orbitSpeed: 7.30, hasRings: false },
-    Earth:     { color: 0x1166ff, size: 4.0, orbitAlt: 400,  orbitSpeed: 7.68, hasRings: false },
-    Luna:      { color: 0xcccccc, size: 1.5, orbitAlt: 100,  orbitSpeed: 1.63, hasRings: false },
-    Mars:      { color: 0xcc4422, size: 2.8, orbitAlt: 320,  orbitSpeed: 3.55, hasRings: false },
-    Phobos:    { color: 0x887766, size: 0.8, orbitAlt: 50,   orbitSpeed: 2.10, hasRings: false },
-    Deimos:    { color: 0x998877, size: 0.6, orbitAlt: 30,   orbitSpeed: 1.35, hasRings: false },
-    Jupiter:   { color: 0xd8a07d, size: 7.5, orbitAlt: 1000, orbitSpeed: 42.1, hasRings: false },
-    Io:        { color: 0xddcc44, size: 1.4, orbitAlt: 120,  orbitSpeed: 17.3, hasRings: false },
-    Europa:    { color: 0xbbbbaa, size: 1.3, orbitAlt: 110,  orbitSpeed: 13.7, hasRings: false },
-    Ganymede:  { color: 0x998888, size: 1.8, orbitAlt: 150,  orbitSpeed: 10.8, hasRings: false },
-    Callisto:  { color: 0x665555, size: 1.7, orbitAlt: 140,  orbitSpeed: 8.20, hasRings: false },
-    Saturn:    { color: 0xe0c870, size: 6.5, orbitAlt: 900,  orbitSpeed: 36.8, hasRings: true },
-    Titan:     { color: 0xeeaa44, size: 1.8, orbitAlt: 160,  orbitSpeed: 5.57, hasRings: false },
-    Enceladus: { color: 0xffffff, size: 0.9, orbitAlt: 60,   orbitSpeed: 12.6, hasRings: false },
-    Uranus:    { color: 0x66ccff, size: 5.0, orbitAlt: 600,  orbitSpeed: 15.2, hasRings: false },
-    Neptune:   { color: 0x2244ff, size: 4.8, orbitAlt: 550,  orbitSpeed: 16.6, hasRings: false },
-    Triton:    { color: 0x99bbcc, size: 1.3, orbitAlt: 100,  orbitSpeed: 4.39, hasRings: false },
-    Andromeda: { color: 0x8844ff, size: 5.5, orbitAlt: 2500, orbitSpeed: 25.0, hasRings: false }
+  let width, height;
+  function resize() {
+    const container = document.getElementById('simulator-container');
+    width = canvas.width = container.clientWidth;
+    height = canvas.height = container.clientHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const bodySpecs = {
+    Mercury: { baseColor: '#8c8c8c', atmosphereColor: 'rgba(200,200,200,0.1)', terrainColor: '#4a4a4a', radius: 180, desc: 'Extreme cratering and iron core composition.' },
+    Venus: { baseColor: '#e3a857', atmosphereColor: 'rgba(255,215,100,0.4)', terrainColor: '#a66011', radius: 240, desc: 'Opaque cloud deck composed of sulfuric acid drops.' },
+    Earth: { baseColor: '#1d4ed8', atmosphereColor: 'rgba(56,189,248,0.5)', terrainColor: '#15803d', radius: 250, desc: 'Nitrogen-oxygen atmosphere with active ocean currents.' },
+    Luna: { baseColor: '#64748b', atmosphereColor: 'rgba(148,163,184,0.1)', terrainColor: '#334155', radius: 130, desc: 'Silicate highland regolith and dark volcanic maria.' },
+    Mars: { baseColor: '#c2410c', atmosphereColor: 'rgba(251,146,60,0.3)', terrainColor: '#7c2d12', radius: 200, desc: 'Dust storms, Valles Marineris canyon, and polar ice.' },
+    Phobos: { baseColor: '#475569', atmosphereColor: 'rgba(255,255,255,0.05)', terrainColor: '#1e293b', radius: 80, desc: 'Grooved carbonaceous potato-shaped moon.' },
+    Deimos: { baseColor: '#334155', atmosphereColor: 'rgba(255,255,255,0.05)', terrainColor: '#0f172a', radius: 60, desc: 'Smooth outer satellite covered in thick regolith.' },
+    Jupiter: { baseColor: '#d97706', atmosphereColor: 'rgba(251,191,36,0.3)', terrainColor: '#b45309', radius: 340, desc: 'Dynamic zonal cloud bands and Great Red Spot storm.' },
+    Io: { baseColor: '#eab308', atmosphereColor: 'rgba(234,179,8,0.3)', terrainColor: '#854d0e', radius: 140, desc: 'Active silicate vulcanism triggered by tidal flexing.' },
+    Europa: { baseColor: '#38bdf8', atmosphereColor: 'rgba(186,230,253,0.5)', terrainColor: '#0284c7', radius: 140, desc: 'Subsurface ocean beneath fractured water ice shell.' },
+    Ganymede: { baseColor: '#475569', atmosphereColor: 'rgba(148,163,184,0.2)', terrainColor: '#334155', radius: 170, desc: 'Grooved terrain over intrinsic magnetosphere core.' },
+    Callisto: { baseColor: '#1e293b', atmosphereColor: 'rgba(100,116,139,0.2)', terrainColor: '#0f172a', radius: 160, desc: 'Ancient ice-rock surface densely covered in craters.' },
+    Saturn: { baseColor: '#f59e0b', atmosphereColor: 'rgba(252,211,77,0.3)', terrainColor: '#b45309', radius: 300, rings: true, desc: 'Prominent ring system composed of water ice chunks.' },
+    Titan: { baseColor: '#ea580c', atmosphereColor: 'rgba(249,115,22,0.6)', terrainColor: '#9a3412', radius: 160, desc: 'Dense orange nitrogen atmosphere with methane lakes.' },
+    Enceladus: { baseColor: '#f8fafc', atmosphereColor: 'rgba(241,245,249,0.7)', terrainColor: '#cbd5e1', radius: 110, desc: 'Cryovolcanic plumes shooting ocean water into space.' },
+    Uranus: { baseColor: '#06b6d4', atmosphereColor: 'rgba(103,232,249,0.4)', terrainColor: '#0e7490', radius: 260, rings: true, desc: 'Extreme 98-degree axial tilt and cyan methane atmosphere.' },
+    Neptune: { baseColor: '#2563eb', atmosphereColor: 'rgba(96,165,250,0.5)', terrainColor: '#1d4ed8', radius: 250, rings: true, desc: 'Fastest planetary winds in Solar System.' },
+    Andromeda: { baseColor: '#fef08a', atmosphereColor: 'rgba(254,240,138,0.4)', terrainColor: '#1e1b4b', radius: 320, desc: 'Barred spiral galaxy M31 containing 1 trillion stars.' },
+    Triangulum: { baseColor: '#bae6fd', atmosphereColor: 'rgba(186,230,253,0.4)', terrainColor: '#0c4a6e', radius: 280, desc: 'Spiral galaxy M33 with active star-forming nebulae.' }
   };
 
-  function init() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 0, 10);
+  let activeTarget = 'Earth';
+  let flightMode = 'ORBITAL';
+  let altitude = 400.0;
+  let isWarping = false;
 
-    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+  // Starfield
+  const stars = Array.from({ length: 500 }, () => ({
+    x: (Math.random() - 0.5) * 2000,
+    y: (Math.random() - 0.5) * 2000,
+    z: Math.random() * 2000,
+    size: Math.random() * 1.5 + 0.5
+  }));
 
-    // Lighting
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
-    sunLight.position.set(100, 50, 100);
-    scene.add(sunLight);
-    scene.add(new THREE.AmbientLight(0x222233));
+  function drawBackgroundStars() {
+    ctx.fillStyle = isWarping ? '#38bdf8' : '#ffffff';
+    for (let s of stars) {
+      s.z -= isWarping ? 40 : 0.5;
+      if (s.z <= 0) s.z = 2000;
 
-    // Dynamic Deep Space Starfield
-    const starGeo = new THREE.BufferGeometry();
-    const starCount = 4000;
-    const starPositions = new Float32Array(starCount * 3);
+      let k = 256 / s.z;
+      let px = s.x * k + width / 2;
+      let py = s.y * k + height / 2;
 
-    for (let i = 0; i < starCount * 3; i += 3) {
-      starPositions[i] = (Math.random() - 0.5) * 1600;
-      starPositions[i + 1] = (Math.random() - 0.5) * 1600;
-      starPositions[i + 2] = (Math.random() - 0.5) * 1600;
-    }
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2 });
-    starfield = new THREE.Points(starGeo, starMat);
-    scene.add(starfield);
-
-    // Initial Celestial Body
-    createCelestialBody('Earth');
-
-    window.addEventListener('resize', onWindowResize);
-    animate();
-  }
-
-  function createCelestialBody(targetKey) {
-    if (currentBody) scene.remove(currentBody);
-    if (ringMesh) scene.remove(ringMesh);
-
-    const spec = targetSpecs[targetKey];
-    const geometry = new THREE.SphereGeometry(spec.size, 64, 64);
-    const material = new THREE.MeshPhongMaterial({
-      color: spec.color,
-      shininess: 25
-    });
-    currentBody = new THREE.Mesh(geometry, material);
-    currentBody.position.set(0, -2, -12);
-    scene.add(currentBody);
-
-    // Add Saturn Rings if target is Saturn
-    if (spec.hasRings) {
-      const ringGeo = new THREE.RingGeometry(spec.size * 1.3, spec.size * 2.2, 64);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xccb870, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
-      ringMesh = new THREE.Mesh(ringGeo, ringMat);
-      ringMesh.rotation.x = Math.PI / 3;
-      ringMesh.position.set(0, -2, -12);
-      scene.add(ringMesh);
+      if (px >= 0 && px <= width && py >= 0 && py <= height) {
+        ctx.beginPath();
+        ctx.arc(px, py, s.size * (isWarping ? 2 : 1), 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
   }
 
-  function animate() {
-    requestAnimationFrame(animate);
+  function drawCelestialBody() {
+    const spec = bodySpecs[activeTarget];
 
-    if (mode === 'ORBITAL') {
-      currentBody.rotation.y += 0.003;
-      if (ringMesh) ringMesh.rotation.z += 0.001;
-      starfield.rotation.y += 0.0002;
-    } else if (mode === 'WARP') {
-      starfield.position.z += 12;
-      if (starfield.position.z > 500) starfield.position.z = 0;
-      currentBody.position.z += 0.15;
-      if (ringMesh) ringMesh.position.z += 0.15;
-    } else if (mode === 'LANDED') {
-      currentBody.rotation.y += 0.0004;
+    // SURFACE LANDED VIEW MODE
+    if (flightMode === 'LANDED') {
+      document.getElementById('reticle').style.opacity = '0';
+
+      // Sky Gradient
+      let skyGrad = ctx.createLinearGradient(0, 0, 0, height * 0.7);
+      skyGrad.addColorStop(0, '#020408');
+      skyGrad.addColorStop(1, spec.baseColor);
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, width, height * 0.7);
+
+      // Surface Terrain Ground
+      ctx.fillStyle = spec.terrainColor;
+      ctx.beginPath();
+      ctx.ellipse(width / 2, height + 100, width * 0.8, height * 0.45, 0, Math.PI, 0);
+      ctx.fill();
+      return;
     }
 
-    renderer.render(scene, camera);
+    // ORBITAL & DESCENT VIEW MODES
+    document.getElementById('reticle').style.opacity = '1';
+
+    let cx = width / 2;
+    // Shift body downward as altitude decreases
+    let targetY = height / 2 + (400 - altitude) * 0.8;
+
+    ctx.save();
+    ctx.translate(cx, targetY);
+
+    // Orbit Guide Lines
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 6]);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, spec.radius + 120, (spec.radius + 120) * 0.4, 0.3, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Atmosphere Glow
+    let glow = ctx.createRadialGradient(0, 0, spec.radius * 0.8, 0, 0, spec.radius + 40);
+    glow.addColorStop(0, spec.atmosphereColor);
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, spec.radius + 40, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Planet Body Sphere
+    let grad = ctx.createRadialGradient(-spec.radius * 0.3, -spec.radius * 0.3, 10, 0, 0, spec.radius);
+    grad.addColorStop(0, '#ffffff');
+    grad.addColorStop(0.3, spec.baseColor);
+    grad.addColorStop(1, '#020617');
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, spec.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Rings
+    if (spec.rings) {
+      ctx.strokeStyle = 'rgba(226, 232, 240, 0.4)';
+      ctx.lineWidth = 14;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, spec.radius + 90, 24, -0.2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    ctx.restore();
   }
 
-  function changeDestination(target) {
-    if (descentInterval) clearInterval(descentInterval);
-    currentTarget = target;
-    const spec = targetSpecs[target];
-    createCelestialBody(target);
-    altitude = spec.orbitAlt;
-    speed = spec.orbitSpeed;
-    mode = 'ORBITAL';
-    currentBody.position.set(0, -2, -12);
+  function render() {
+    ctx.fillStyle = '#020408';
+    ctx.fillRect(0, 0, width, height);
+
+    drawBackgroundStars();
+    drawCelestialBody();
+
+    // Smooth descent handling during entry
+    if (flightMode === 'LANDING') {
+      if (altitude > 0) {
+        altitude = Math.max(0, altitude - 3.0);
+        updateUI();
+      } else {
+        flightMode = 'LANDED';
+        document.getElementById('status-banner').innerText = "TOUCHDOWN CONFIRMED • SURFACE RECON ACTIVE";
+        updateUI();
+      }
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  render();
+
+  function changeTarget() {
+    activeTarget = document.getElementById('destinationSelect').value;
+    flightMode = 'ORBITAL';
+    altitude = 400.0;
+    document.getElementById('status-banner').innerText = `APPROACHING ${activeTarget.toUpperCase()}`;
     updateUI();
   }
 
   function toggleWarp() {
-    if (descentInterval) clearInterval(descentInterval);
-    if (mode === 'WARP') {
-      mode = 'ORBITAL';
-      speed = targetSpecs[currentTarget].orbitSpeed;
-    } else {
-      mode = 'WARP';
-      speed = 299792;
-    }
-    updateUI();
+    isWarping = true;
+    document.getElementById('status-banner').innerText = "WARP DRIVE ENGAGED";
+    setTimeout(() => {
+      isWarping = false;
+      document.getElementById('status-banner').innerText = "ORBITAL TRACKING ACTIVE • REAL-TIME RENDER";
+    }, 2000);
   }
 
   function initiateLanding() {
-    if (mode === 'LANDED' || mode === 'LANDING SEQUENCE') return;
-    mode = 'LANDING SEQUENCE';
-    updateUI();
-
-    descentInterval = setInterval(() => {
-      if (altitude > 0) {
-        altitude -= 15;
-        currentBody.position.y += 0.2;
-        currentBody.position.z += 0.25;
-        if (ringMesh) ringMesh.position.z += 0.25;
-        speed = Math.max(0, (altitude / 12).toFixed(1));
-        updateUI();
-      } else {
-        clearInterval(descentInterval);
-        mode = 'LANDED';
-        altitude = 0.0;
-        speed = 0.0;
-        updateUI();
-      }
-    }, 100);
+    if (flightMode === 'LANDED') return;
+    flightMode = 'LANDING';
+    document.getElementById('status-banner').innerText = "ATMOSPHERIC ENTRY & DESCENT IN PROGRESS";
   }
 
-  function returnToOrbit() {
-    if (descentInterval) clearInterval(descentInterval);
-    const spec = targetSpecs[currentTarget];
-    mode = 'ORBITAL';
-    altitude = spec.orbitAlt;
-    speed = spec.orbitSpeed;
-    createCelestialBody(currentTarget);
+  function ascentToOrbit() {
+    flightMode = 'ORBITAL';
+    altitude = 400.0;
+    document.getElementById('status-banner').innerText = "STABLE ORBIT ACHIEVED";
     updateUI();
   }
 
   function updateUI() {
-    document.getElementById('target-name').textContent = currentTarget;
-    document.getElementById('flight-mode').textContent = mode;
-    document.getElementById('alt-val').textContent = `${altitude.toFixed(1)} km`;
-    document.getElementById('speed-val').textContent = `${speed} km/s`;
+    const spec = bodySpecs[activeTarget];
+    document.getElementById('target-name').innerText = activeTarget;
+    document.getElementById('flight-mode').innerText = flightMode;
+    document.getElementById('alt-val').innerText = `${altitude.toFixed(1)} km`;
+    document.getElementById('spec-text').innerText = spec.desc;
   }
-
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  }
-
-  window.onload = init;
 </script>
 </body>
 </html>
