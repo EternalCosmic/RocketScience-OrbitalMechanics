@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Orbit Cockpit Simulator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #05070a;
+      color: #00ffcc;
+      font-family: 'Courier New', Courier, monospace;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Navigation Bar */
+    nav {
+      background: rgba(10, 20, 30, 0.95);
+      border-bottom: 1px solid #00ffcc;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .nav-btn {
+      background: #00332c;
+      border: 1px solid #00ffcc;
+      color: #00ffcc;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .nav-btn:hover { background: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
+
+    #simulator-container {
+      position: relative;
+      flex: 1;
+      width: 100vw;
+      background: #000;
+      overflow: hidden;
+    }
+
+    /* Background Animation Canvas */
+    canvas#space-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Cockpit Frame Overlay */
+    .cockpit-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+      border: 20px solid #1a1d24;
+    }
+
+    /* HUD Dashboard UI */
+    .hud-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      pointer-events: none;
+    }
+
+    .hud-header {
+      text-align: center;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px #00ffcc;
+    }
+
+    .hud-panels {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .panel {
+      background: rgba(10, 20, 30, 0.75);
+      border: 1px solid #00ffcc;
+      padding: 15px 20px;
+      border-radius: 6px;
+      pointer-events: auto;
+      backdrop-filter: blur(4px);
+    }
+
+    .panel h3 {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+      border-bottom: 1px solid #00ffcc;
+      padding-bottom: 4px;
+    }
+
+    .metric {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .control-btn {
+      background: #00332c;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+      padding: 8px 14px;
+      margin: 4px 0;
+      cursor: pointer;
+      width: 100%;
+      font-family: inherit;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="brand-title">LIVE ORBIT COCKPIT SIMULATOR</div>
+  <a href="index.html" class="nav-btn">← Back to Presentation Deck</a>
+</nav>
+
+<div id="simulator-container">
+  <canvas id="space-canvas"></canvas>
+  <div class="cockpit-frame"></div>
+
+  <div class="hud-layer">
+    <div class="hud-header">
+      LIVE ORBIT SIMULATOR - ACTIVE SESSION
+    </div>
+
+    <div class="hud-panels">
+      <!-- Left Telemetry Panel -->
+      <div class="panel">
+        <h3>ALTITUDE &amp; SHAPE</h3>
+        <div>VELOCITY:</div>
+        <div class="metric" id="speed-val">7.68 km/s</div>
+        <div>ALTITUDE:</div>
+        <div class="metric" id="alt-val">400.0 km</div>
+        <div>ECCENTRICITY (e):</div>
+        <div class="metric" id="ecc-val">0.001</div>
+      </div>
+
+      <!-- Right Flight Control Panel -->
+      <div class="panel" style="min-width: 200px;">
+        <h3>IMPULSE MANEUVERS</h3>
+        <button class="control-btn" onclick="adjustSpeed(0.15)">[ Prograde (+Δv) ]</button>
+        <button class="control-btn" onclick="adjustSpeed(-0.15)">[ Retrograde (-Δv) ]</button>
+        <button class="control-btn" onclick="resetOrbit()">[ Reset Orbit ]</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('space-canvas');
+  const ctx = canvas.getContext('2d');
+
+  let width, height;
+  function resize() {
+    const container = document.getElementById('simulator-container');
+    width = canvas.width = container.clientWidth;
+    height = canvas.height = container.clientHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Orbital Telemetry Parameters
+  let velocity = 7.68;
+  let altitude = 400.0;
+  let eccentricity = 0.001;
+
+  // Starfield Generator
+  const numStars = 300;
+  const stars = Array.from({ length: numStars }, () => ({
+    x: (Math.random() - 0.5) * width * 2,
+    y: (Math.random() - 0.5) * height * 2,
+    z: Math.random() * width,
+    size: Math.random() * 1.5 + 0.5
+  }));
+
+  function updateStars() {
+    const speed = velocity * 0.8;
+    for (let star of stars) {
+      star.z -= speed;
+      if (star.z <= 0) {
+        star.z = width;
+        star.x = (Math.random() - 0.5) * width * 2;
+        star.y = (Math.random() - 0.5) * height * 2;
+      }
+    }
+  }
+
+  function drawStars() {
+    ctx.fillStyle = 'white';
+    for (let star of stars) {
+      const k = 256 / star.z;
+      const px = star.x * k + width / 2;
+      const py = star.y * k + height / 2;
+
+      if (px >= 0 && px <= width && py >= 0 && py <= height) {
+        const size = (1 - star.z / width) * star.size * 2;
+        ctx.beginPath();
+        ctx.arc(px, py, Math.max(size, 0.5), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  // Draw Earth curvature in main window viewport
+  let earthAngle = 0;
+  function drawEarth() {
+    earthAngle += velocity * 0.0002;
+    ctx.save();
+    ctx.translate(width / 2, height + 450 - (altitude * 0.5));
+    
+    // Atmosphere glow
+    const glow = ctx.createRadialGradient(0, 0, 600, 0, 0, 650);
+    glow.addColorStop(0, 'rgba(0, 180, 255, 0.8)');
+    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, 650, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Planet Body
+    ctx.beginPath();
+    ctx.arc(0, 0, 600, 0, Math.PI * 2);
+    ctx.fillStyle = '#0f3854';
+    ctx.fill();
+    
+    ctx.restore();
+  }
+
+  // Main Render Loop
+  function animate() {
+    ctx.fillStyle = '#030508';
+    ctx.fillRect(0, 0, width, height);
+
+    updateStars();
+    drawStars();
+    drawEarth();
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Control Handlers
+  function adjustSpeed(delta) {
+    velocity = Math.max(5.0, Math.min(11.2, velocity + delta));
+    altitude += delta * 45;
+    eccentricity = Math.abs((velocity - 7.68) * 0.05).toFixed(3);
+    updateUI();
+  }
+
+  function resetOrbit() {
+    velocity = 7.68;
+    altitude = 400.0;
+    eccentricity = 0.001;
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('speed-val').textContent = `${velocity.toFixed(2)} km/s`;
+    document.getElementById('alt-val').textContent = `${altitude.toFixed(1)} km`;
+    document.getElementById('ecc-val').textContent = eccentricity;
+  }
+</script>
+</body>
+</html>
