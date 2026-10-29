@@ -3,61 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Orbit Simulator</title>
+  <title>Interstellar & Solar System Landing Simulator</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background-color: #05070a;
+      background-color: #010204;
       color: #00ffcc;
       font-family: 'Courier New', Courier, monospace;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
       height: 100vh;
-    }
-
-    /* Navigation Bar */
-    nav {
-      background: rgba(10, 20, 30, 0.95);
-      border-bottom: 1px solid #00ffcc;
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 100;
-    }
-
-    .brand-title {
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-    }
-
-    .nav-btn {
-      background: #00332c;
-      border: 1px solid #00ffcc;
-      color: #00ffcc;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: bold;
-      text-decoration: none;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-    .nav-btn:hover { background: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
-
-    #simulator-container {
-      position: relative;
-      flex: 1;
       width: 100vw;
-      background: #000;
-      overflow: hidden;
     }
 
-    /* Background Animation Canvas */
-    canvas#space-canvas {
+    #sim-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas#webgl-canvas {
       position: absolute;
       top: 0;
       left: 0;
@@ -66,8 +35,7 @@
       z-index: 1;
     }
 
-    /* Cockpit Frame Overlay */
-    .cockpit-frame {
+    .cockpit-overlay {
       position: absolute;
       top: 0;
       left: 0;
@@ -75,11 +43,10 @@
       height: 100%;
       z-index: 2;
       pointer-events: none;
-      box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
-      border: 20px solid #1a1d24;
+      box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.95);
+      border: 24px solid #0f131a;
     }
 
-    /* HUD Dashboard UI */
     .hud-layer {
       position: absolute;
       top: 0;
@@ -90,218 +57,352 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 30px;
+      padding: 28px;
       pointer-events: none;
     }
 
-    .hud-header {
+    .hud-title {
       text-align: center;
-      font-size: 1.4rem;
-      letter-spacing: 2px;
+      font-size: 1.2rem;
+      letter-spacing: 3px;
       text-shadow: 0 0 10px #00ffcc;
+      background: rgba(4, 12, 20, 0.75);
+      padding: 10px 20px;
+      border-radius: 6px;
+      align-self: center;
+      border: 1px solid rgba(0, 255, 204, 0.4);
     }
 
     .hud-panels {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      width: 100%;
     }
 
     .panel {
-      background: rgba(10, 20, 30, 0.75);
+      background: rgba(6, 14, 24, 0.88);
       border: 1px solid #00ffcc;
-      padding: 15px 20px;
-      border-radius: 6px;
+      padding: 18px 22px;
+      border-radius: 8px;
       pointer-events: auto;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
+      min-width: 280px;
     }
 
     .panel h3 {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin-bottom: 10px;
       color: #ffffff;
       border-bottom: 1px solid #00ffcc;
       padding-bottom: 4px;
+      letter-spacing: 1px;
     }
 
     .metric {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: bold;
       margin-bottom: 8px;
+      color: #00ffcc;
     }
 
     .control-btn {
-      background: #00332c;
+      background: #002b26;
       color: #00ffcc;
       border: 1px solid #00ffcc;
-      padding: 8px 14px;
-      margin: 4px 0;
+      padding: 9px 14px;
+      margin: 5px 0;
       cursor: pointer;
       width: 100%;
       font-family: inherit;
       font-weight: bold;
-      transition: all 0.2s ease;
+      border-radius: 4px;
+      transition: all 0.2s ease-in-out;
     }
 
     .control-btn:hover {
       background: #00ffcc;
-      color: #000;
-      box-shadow: 0 0 10px #00ffcc;
+      color: #000000;
+      box-shadow: 0 0 12px #00ffcc;
+    }
+
+    select.target-select {
+      width: 100%;
+      padding: 8px;
+      background: #001f1c;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+      margin-bottom: 12px;
+      font-family: inherit;
+      border-radius: 4px;
+    }
+
+    optgroup {
+      background: #04121a;
+      color: #ffffff;
     }
   </style>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-<nav>
-  <div class="brand-title">LIVE ORBIT COCKPIT SIMULATOR</div>
-  <a href="index.html" class="nav-btn">← Back to Presentation Deck</a>
-</nav>
-
-<div id="simulator-container">
-  <canvas id="space-canvas"></canvas>
-  <div class="cockpit-frame"></div>
+<div id="sim-container">
+  <canvas id="webgl-canvas"></canvas>
+  <div class="cockpit-overlay"></div>
 
   <div class="hud-layer">
-    <div class="hud-header">
-      LIVE ORBIT SIMULATOR - ACTIVE SESSION
-    </div>
+    <div class="hud-title">SOLAR SYSTEM &amp; DEEP SPACE NAVIGATION</div>
 
     <div class="hud-panels">
-      <!-- Left Telemetry Panel -->
+      <!-- Flight Telemetry -->
       <div class="panel">
-        <h3>ALTITUDE &amp; SHAPE</h3>
+        <h3>FLIGHT TELEMETRY</h3>
+        <div>ACTIVE SYSTEM:</div>
+        <div class="metric" id="target-name">Earth</div>
+        <div>FLIGHT MODE:</div>
+        <div class="metric" id="flight-mode">ORBITAL</div>
+        <div>ALTITUDE / DISTANCE:</div>
+        <div class="metric" id="alt-val">400.0 km</div>
         <div>VELOCITY:</div>
         <div class="metric" id="speed-val">7.68 km/s</div>
-        <div>ALTITUDE:</div>
-        <div class="metric" id="alt-val">400.0 km</div>
-        <div>ECCENTRICITY (e):</div>
-        <div class="metric" id="ecc-val">0.001</div>
       </div>
 
-      <!-- Right Flight Control Panel -->
-      <div class="panel" style="min-width: 200px;">
-        <h3>IMPULSE MANEUVERS</h3>
-        <button class="control-btn" onclick="adjustSpeed(0.15)">[ Prograde (+Δv) ]</button>
-        <button class="control-btn" onclick="adjustSpeed(-0.15)">[ Retrograde (-Δv) ]</button>
-        <button class="control-btn" onclick="resetOrbit()">[ Reset Orbit ]</button>
+      <!-- Navigation & Flight Commands -->
+      <div class="panel">
+        <h3>CELESTIAL DESTINATION</h3>
+        <select id="destination" class="target-select" onchange="changeDestination(this.value)">
+          <optgroup label="Inner Planets & Moon">
+            <option value="Mercury">Mercury</option>
+            <option value="Venus">Venus</option>
+            <option value="Earth" selected>Earth</option>
+            <option value="Luna">Luna (Earth's Moon)</option>
+            <option value="Mars">Mars</option>
+          </optgroup>
+          <optgroup label="Martian Moons">
+            <option value="Phobos">Phobos (Mars)</option>
+            <option value="Deimos">Deimos (Mars)</option>
+          </optgroup>
+          <optgroup label="Gas Giants">
+            <option value="Jupiter">Jupiter</option>
+            <option value="Saturn">Saturn</option>
+          </optgroup>
+          <optgroup label="Jovian Moons">
+            <option value="Io">Io (Jupiter)</option>
+            <option value="Europa">Europa (Jupiter)</option>
+            <option value="Ganymede">Ganymede (Jupiter)</option>
+            <option value="Callisto">Callisto (Jupiter)</option>
+          </optgroup>
+          <optgroup label="Saturnian Moons">
+            <option value="Titan">Titan (Saturn)</option>
+            <option value="Enceladus">Enceladus (Saturn)</option>
+          </optgroup>
+          <optgroup label="Ice Giants">
+            <option value="Uranus">Uranus</option>
+            <option value="Neptune">Neptune</option>
+          </optgroup>
+          <optgroup label="Outer Moons">
+            <option value="Triton">Triton (Neptune)</option>
+          </optgroup>
+          <optgroup label="Deep Space">
+            <option value="Andromeda">Andromeda Sector</option>
+          </optgroup>
+        </select>
+        <button class="control-btn" onclick="toggleWarp()">[ Interstellar Warp Drive ]</button>
+        <button class="control-btn" onclick="initiateLanding()">[ Initiate Surface Landing ]</button>
+        <button class="control-btn" onclick="returnToOrbit()">[ Ascent to Orbit ]</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  const canvas = document.getElementById('space-canvas');
-  const ctx = canvas.getContext('2d');
-
-  let width, height;
-  function resize() {
-    const container = document.getElementById('simulator-container');
-    width = canvas.width = container.clientWidth;
-    height = canvas.height = container.clientHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  // Orbital Telemetry Parameters
-  let velocity = 7.68;
+  let scene, camera, renderer, starfield;
+  let currentBody, ringMesh;
+  
+  // Simulation State
+  let currentTarget = 'Earth';
+  let mode = 'ORBITAL'; 
   let altitude = 400.0;
-  let eccentricity = 0.001;
+  let speed = 7.68;
+  let descentInterval = null;
 
-  // Starfield Generator
-  const numStars = 300;
-  const stars = Array.from({ length: numStars }, () => ({
-    x: (Math.random() - 0.5) * width * 2,
-    y: (Math.random() - 0.5) * height * 2,
-    z: Math.random() * width,
-    size: Math.random() * 1.5 + 0.5
-  }));
+  // Celestial Objects Database
+  const targetSpecs = {
+    Mercury:   { color: 0xaaaaaa, size: 2.2, orbitAlt: 200,  orbitSpeed: 3.00, hasRings: false },
+    Venus:     { color: 0xe3bb76, size: 3.8, orbitAlt: 300,  orbitSpeed: 7.30, hasRings: false },
+    Earth:     { color: 0x1166ff, size: 4.0, orbitAlt: 400,  orbitSpeed: 7.68, hasRings: false },
+    Luna:      { color: 0xcccccc, size: 1.5, orbitAlt: 100,  orbitSpeed: 1.63, hasRings: false },
+    Mars:      { color: 0xcc4422, size: 2.8, orbitAlt: 320,  orbitSpeed: 3.55, hasRings: false },
+    Phobos:    { color: 0x887766, size: 0.8, orbitAlt: 50,   orbitSpeed: 2.10, hasRings: false },
+    Deimos:    { color: 0x998877, size: 0.6, orbitAlt: 30,   orbitSpeed: 1.35, hasRings: false },
+    Jupiter:   { color: 0xd8a07d, size: 7.5, orbitAlt: 1000, orbitSpeed: 42.1, hasRings: false },
+    Io:        { color: 0xddcc44, size: 1.4, orbitAlt: 120,  orbitSpeed: 17.3, hasRings: false },
+    Europa:    { color: 0xbbbbaa, size: 1.3, orbitAlt: 110,  orbitSpeed: 13.7, hasRings: false },
+    Ganymede:  { color: 0x998888, size: 1.8, orbitAlt: 150,  orbitSpeed: 10.8, hasRings: false },
+    Callisto:  { color: 0x665555, size: 1.7, orbitAlt: 140,  orbitSpeed: 8.20, hasRings: false },
+    Saturn:    { color: 0xe0c870, size: 6.5, orbitAlt: 900,  orbitSpeed: 36.8, hasRings: true },
+    Titan:     { color: 0xeeaa44, size: 1.8, orbitAlt: 160,  orbitSpeed: 5.57, hasRings: false },
+    Enceladus: { color: 0xffffff, size: 0.9, orbitAlt: 60,   orbitSpeed: 12.6, hasRings: false },
+    Uranus:    { color: 0x66ccff, size: 5.0, orbitAlt: 600,  orbitSpeed: 15.2, hasRings: false },
+    Neptune:   { color: 0x2244ff, size: 4.8, orbitAlt: 550,  orbitSpeed: 16.6, hasRings: false },
+    Triton:    { color: 0x99bbcc, size: 1.3, orbitAlt: 100,  orbitSpeed: 4.39, hasRings: false },
+    Andromeda: { color: 0x8844ff, size: 5.5, orbitAlt: 2500, orbitSpeed: 25.0, hasRings: false }
+  };
 
-  function updateStars() {
-    const speed = velocity * 0.8;
-    for (let star of stars) {
-      star.z -= speed;
-      if (star.z <= 0) {
-        star.z = width;
-        star.x = (Math.random() - 0.5) * width * 2;
-        star.y = (Math.random() - 0.5) * height * 2;
-      }
+  function init() {
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 0, 10);
+
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Lighting
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    sunLight.position.set(100, 50, 100);
+    scene.add(sunLight);
+    scene.add(new THREE.AmbientLight(0x222233));
+
+    // Dynamic Deep Space Starfield
+    const starGeo = new THREE.BufferGeometry();
+    const starCount = 4000;
+    const starPositions = new Float32Array(starCount * 3);
+
+    for (let i = 0; i < starCount * 3; i += 3) {
+      starPositions[i] = (Math.random() - 0.5) * 1600;
+      starPositions[i + 1] = (Math.random() - 0.5) * 1600;
+      starPositions[i + 2] = (Math.random() - 0.5) * 1600;
+    }
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2 });
+    starfield = new THREE.Points(starGeo, starMat);
+    scene.add(starfield);
+
+    // Initial Celestial Body
+    createCelestialBody('Earth');
+
+    window.addEventListener('resize', onWindowResize);
+    animate();
+  }
+
+  function createCelestialBody(targetKey) {
+    if (currentBody) scene.remove(currentBody);
+    if (ringMesh) scene.remove(ringMesh);
+
+    const spec = targetSpecs[targetKey];
+    const geometry = new THREE.SphereGeometry(spec.size, 64, 64);
+    const material = new THREE.MeshPhongMaterial({
+      color: spec.color,
+      shininess: 25
+    });
+    currentBody = new THREE.Mesh(geometry, material);
+    currentBody.position.set(0, -2, -12);
+    scene.add(currentBody);
+
+    // Add Saturn Rings if target is Saturn
+    if (spec.hasRings) {
+      const ringGeo = new THREE.RingGeometry(spec.size * 1.3, spec.size * 2.2, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xccb870, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+      ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.x = Math.PI / 3;
+      ringMesh.position.set(0, -2, -12);
+      scene.add(ringMesh);
     }
   }
 
-  function drawStars() {
-    ctx.fillStyle = 'white';
-    for (let star of stars) {
-      const k = 256 / star.z;
-      const px = star.x * k + width / 2;
-      const py = star.y * k + height / 2;
-
-      if (px >= 0 && px <= width && py >= 0 && py <= height) {
-        const size = (1 - star.z / width) * star.size * 2;
-        ctx.beginPath();
-        ctx.arc(px, py, Math.max(size, 0.5), 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-  }
-
-  // Draw Earth curvature in main window viewport
-  let earthAngle = 0;
-  function drawEarth() {
-    earthAngle += velocity * 0.0002;
-    ctx.save();
-    ctx.translate(width / 2, height + 450 - (altitude * 0.5));
-    
-    // Atmosphere glow
-    const glow = ctx.createRadialGradient(0, 0, 600, 0, 0, 650);
-    glow.addColorStop(0, 'rgba(0, 180, 255, 0.8)');
-    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = glow;
-    ctx.beginPath();
-    ctx.arc(0, 0, 650, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Planet Body
-    ctx.beginPath();
-    ctx.arc(0, 0, 600, 0, Math.PI * 2);
-    ctx.fillStyle = '#0f3854';
-    ctx.fill();
-    
-    ctx.restore();
-  }
-
-  // Main Render Loop
   function animate() {
-    ctx.fillStyle = '#030508';
-    ctx.fillRect(0, 0, width, height);
-
-    updateStars();
-    drawStars();
-    drawEarth();
-
     requestAnimationFrame(animate);
-  }
-  animate();
 
-  // Control Handlers
-  function adjustSpeed(delta) {
-    velocity = Math.max(5.0, Math.min(11.2, velocity + delta));
-    altitude += delta * 45;
-    eccentricity = Math.abs((velocity - 7.68) * 0.05).toFixed(3);
+    if (mode === 'ORBITAL') {
+      currentBody.rotation.y += 0.003;
+      if (ringMesh) ringMesh.rotation.z += 0.001;
+      starfield.rotation.y += 0.0002;
+    } else if (mode === 'WARP') {
+      starfield.position.z += 12;
+      if (starfield.position.z > 500) starfield.position.z = 0;
+      currentBody.position.z += 0.15;
+      if (ringMesh) ringMesh.position.z += 0.15;
+    } else if (mode === 'LANDED') {
+      currentBody.rotation.y += 0.0004;
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  function changeDestination(target) {
+    if (descentInterval) clearInterval(descentInterval);
+    currentTarget = target;
+    const spec = targetSpecs[target];
+    createCelestialBody(target);
+    altitude = spec.orbitAlt;
+    speed = spec.orbitSpeed;
+    mode = 'ORBITAL';
+    currentBody.position.set(0, -2, -12);
     updateUI();
   }
 
-  function resetOrbit() {
-    velocity = 7.68;
-    altitude = 400.0;
-    eccentricity = 0.001;
+  function toggleWarp() {
+    if (descentInterval) clearInterval(descentInterval);
+    if (mode === 'WARP') {
+      mode = 'ORBITAL';
+      speed = targetSpecs[currentTarget].orbitSpeed;
+    } else {
+      mode = 'WARP';
+      speed = 299792;
+    }
+    updateUI();
+  }
+
+  function initiateLanding() {
+    if (mode === 'LANDED' || mode === 'LANDING SEQUENCE') return;
+    mode = 'LANDING SEQUENCE';
+    updateUI();
+
+    descentInterval = setInterval(() => {
+      if (altitude > 0) {
+        altitude -= 15;
+        currentBody.position.y += 0.2;
+        currentBody.position.z += 0.25;
+        if (ringMesh) ringMesh.position.z += 0.25;
+        speed = Math.max(0, (altitude / 12).toFixed(1));
+        updateUI();
+      } else {
+        clearInterval(descentInterval);
+        mode = 'LANDED';
+        altitude = 0.0;
+        speed = 0.0;
+        updateUI();
+      }
+    }, 100);
+  }
+
+  function returnToOrbit() {
+    if (descentInterval) clearInterval(descentInterval);
+    const spec = targetSpecs[currentTarget];
+    mode = 'ORBITAL';
+    altitude = spec.orbitAlt;
+    speed = spec.orbitSpeed;
+    createCelestialBody(currentTarget);
     updateUI();
   }
 
   function updateUI() {
-    document.getElementById('speed-val').textContent = `${velocity.toFixed(2)} km/s`;
+    document.getElementById('target-name').textContent = currentTarget;
+    document.getElementById('flight-mode').textContent = mode;
     document.getElementById('alt-val').textContent = `${altitude.toFixed(1)} km`;
-    document.getElementById('ecc-val').textContent = eccentricity;
+    document.getElementById('speed-val').textContent = `${speed} km/s`;
   }
+
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  window.onload = init;
 </script>
 </body>
 </html>
