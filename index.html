@@ -125,7 +125,7 @@
         .readout-val { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: var(--accent-blue); }
         .readout-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
-        canvas.sim-canvas { width: 100%; height: 420px; background: #02040a; border-radius: 12px; border: 1px solid var(--card-border); }
+        canvas.sim-canvas { width: 100%; height: 420px; background: #02040a; border-radius: 12px; border: 1px solid var(--card-border); display: block; }
 
         /* Fullscreen Lightbox Overlay */
         .lightbox-overlay {
@@ -189,23 +189,24 @@
     </nav>
 
     <div class="presentation-deck" id="deck">
-<!-- Slide 1: Title -->
-<div class="slide-card" onclick="openSlideModal(this, 1)">
-    <div class="slide-media">
-        <img src="webinarRocket.jpg" alt="Saturn V Rocket Night Launch">
-    </div>
-    <div class="slide-content">
-        <div class="slide-tag">Slide 1: Title Slide (Click for Fullscreen)</div>
-        <h2 class="slide-title">Rocket Science & Orbital Mechanics</h2>
-        <p style="color: var(--accent-blue); font-weight: 600; margin-bottom: 16px;">How Rockets Reach Space and Stay in Orbit</p>
-        <ul class="slide-bullet-list">
-            <li><strong>Presenter:</strong> Katie Carlson</li>
-            <li><strong>Role:</strong> Command & Data Handling Engineer, NASA L'SPACE Academy</li>
-            <li><strong>Affiliation:</strong> California Polytechnic State University (Cal Poly)</li>
-            <li><strong>Fields:</strong> Computer Science Major; Physics & Aerospace Minors</li>
-        </ul>
-    </div>
-</div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide-card" onclick="openSlideModal(this, 1)">
+            <div class="slide-media">
+                <img src="webinarRocket.jpg" alt="Saturn V Rocket Night Launch">
+            </div>
+            <div class="slide-content">
+                <div class="slide-tag">Slide 1: Title Slide (Click for Fullscreen)</div>
+                <h2 class="slide-title">Rocket Science & Orbital Mechanics</h2>
+                <p style="color: var(--accent-blue); font-weight: 600; margin-bottom: 16px;">How Rockets Reach Space and Stay in Orbit</p>
+                <ul class="slide-bullet-list">
+                    <li><strong>Presenter:</strong> Katie Carlson</li>
+                    <li><strong>Role:</strong> Command & Data Handling Engineer, NASA L'SPACE Academy</li>
+                    <li><strong>Affiliation:</strong> California Polytechnic State University (Cal Poly)</li>
+                    <li><strong>Fields:</strong> Computer Science Major; Physics & Aerospace Minors</li>
+                </ul>
+            </div>
+        </div>
 
         <!-- Slide 2: Speaker Profile -->
         <div class="slide-card" onclick="openSlideModal(this, 2)">
@@ -241,38 +242,40 @@
             </div>
         </div>
 
-<!-- Slide 4: Propulsion -->
-<div class="slide-card" onclick="openSlideModal(this, 4)">
-    <div class="slide-media">
-        <img src="NewtonsThirdLaw.png" alt="Newton's Third Law and Thrust Vector Control Diagram">
-    </div>
-    <div class="slide-content">
-        <div class="slide-tag">Slide 4: Part 1 - Propulsion</div>
-        <h2 class="slide-title">Leaving Earth: Newton's Third Law</h2>
-        <ul class="slide-bullet-list">
-            <li><strong>Action & Reaction:</strong> Force = d(mv)/dt. Expelling momentum downward drives payload upward.</li>
-            <li><strong>Vacuum Propulsion:</strong> Rockets push against their own exhaust momentum, not atmospheric air.</li>
-            <li><strong>Thrust Vector Control (TVC):</strong> Gimbaling engines to control pitch, yaw, and flight stability.</li>
-            <li><strong>Atmospheric Drag:</strong> Overcoming dynamic resistance during dense atmospheric ascent.</li>
-        </ul>
-    </div>
-</div>
-<!-- Slide 5: Rocket Dynamics -->
-<div class="slide-card" onclick="openSlideModal(this, 5)">
-    <div class="slide-media">
-        <img src="rocketslide5.png" alt="The Tyranny of the Rocket Equation Diagram">
-    </div>
-    <div class="slide-content">
-        <div class="slide-tag">Slide 5: Rocket Dynamics</div>
-        <h2 class="slide-title">The Tyranny of the Rocket Equation</h2>
-        <ul class="slide-bullet-list">
-            <li><strong>Tsiolkovsky's Rocket Equation:</strong> Δv = v_e * ln(m0 / mf). Exponential fuel growth for linear speed gains.</li>
-            <li><strong>Mass Breakdown:</strong> Typical rockets are ~90% propellant, ~9% dry structure, and only ~1% payload.</li>
-            <li><strong>Multistage Rockets:</strong> Shedding empty propellant tanks to decrease dry mass and optimize energy efficiency.</li>
-            <li><strong>Max Q:</strong> Point of maximum dynamic pressure where structural strain peaks.</li>
-        </ul>
-    </div>
-</div>
+        <!-- Slide 4: Propulsion -->
+        <div class="slide-card" onclick="openSlideModal(this, 4)">
+            <div class="slide-media">
+                <img src="NewtonsThirdLaw.png" alt="Newton's Third Law and Thrust Vector Control Diagram">
+            </div>
+            <div class="slide-content">
+                <div class="slide-tag">Slide 4: Part 1 - Propulsion</div>
+                <h2 class="slide-title">Leaving Earth: Newton's Third Law</h2>
+                <ul class="slide-bullet-list">
+                    <li><strong>Action & Reaction:</strong> Force = d(mv)/dt. Expelling momentum downward drives payload upward.</li>
+                    <li><strong>Vacuum Propulsion:</strong> Rockets push against their own exhaust momentum, not atmospheric air.</li>
+                    <li><strong>Thrust Vector Control (TVC):</strong> Gimbaling engines to control pitch, yaw, and flight stability.</li>
+                    <li><strong>Atmospheric Drag:</strong> Overcoming dynamic resistance during dense atmospheric ascent.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Rocket Dynamics -->
+        <div class="slide-card" onclick="openSlideModal(this, 5)">
+            <div class="slide-media">
+                <img src="rocketslide5.png" alt="The Tyranny of the Rocket Equation Diagram">
+            </div>
+            <div class="slide-content">
+                <div class="slide-tag">Slide 5: Rocket Dynamics</div>
+                <h2 class="slide-title">The Tyranny of the Rocket Equation</h2>
+                <ul class="slide-bullet-list">
+                    <li><strong>Tsiolkovsky's Rocket Equation:</strong> Δv = v_e * ln(m0 / mf). Exponential fuel growth for linear speed gains.</li>
+                    <li><strong>Mass Breakdown:</strong> Typical rockets are ~90% propellant, ~9% dry structure, and only ~1% payload.</li>
+                    <li><strong>Multistage Rockets:</strong> Shedding empty propellant tanks to decrease dry mass and optimize energy efficiency.</li>
+                    <li><strong>Max Q:</strong> Point of maximum dynamic pressure where structural strain peaks.</li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Slide 6: Orbital Mechanics -->
         <div class="slide-card" onclick="openSlideModal(this, 6)">
             <div class="slide-media">
@@ -410,8 +413,7 @@
     <script>
         function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
 
-        let modalAnimFrame = null;
-
+        // Modal Handler
         function openSlideModal(card, slideNum) {
             const overlay = document.getElementById('lightboxOverlay');
             const mediaBox = document.getElementById('modalMediaContainer');
@@ -432,18 +434,6 @@
                 imgClone.style.height = '100%';
                 imgClone.style.objectFit = 'contain';
                 mediaBox.appendChild(imgClone);
-            } else {
-                // Rocket Launch / Thruster Canvas for Modal
-                const modalCanvas = document.createElement('canvas');
-                modalCanvas.style.width = '100%';
-                modalCanvas.style.height = '100%';
-                mediaBox.appendChild(modalCanvas);
-
-                if (slideNum === 1) {
-                    runModalRocketLaunch(modalCanvas);
-                } else if (slideNum === 4) {
-                    runModalThruster(modalCanvas);
-                }
             }
 
             overlay.classList.add('active');
@@ -454,178 +444,26 @@
             const overlay = document.getElementById('lightboxOverlay');
             overlay.classList.remove('active');
             document.body.style.overflow = 'auto';
-            if (modalAnimFrame) cancelAnimationFrame(modalAnimFrame);
         }
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeSlideModal();
         });
 
-        // Advanced Rocket Launch Animation for Slide 1 Modal
-        function runModalRocketLaunch(canvas) {
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth || 500;
-            canvas.height = 380;
-
-            let t = 0;
-            let exhaustParticles = [];
-
-            function animate() {
-                ctx.fillStyle = '#02040a';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Twinkling Stars
-                ctx.fillStyle = '#ffffff';
-                for (let i = 0; i < 40; i++) {
-                    let sx = (Math.sin(i * 123) * 10000) % canvas.width;
-                    let sy = (Math.cos(i * 321) * 10000) % canvas.height;
-                    ctx.fillRect(Math.abs(sx), Math.abs(sy), 1.5, 1.5);
-                }
-
-                // Launch Arc Line
-                ctx.beginPath();
-                ctx.strokeStyle = 'rgba(0, 210, 255, 0.3)';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([6, 6]);
-                ctx.moveTo(60, canvas.height - 30);
-                ctx.quadraticCurveTo(canvas.width * 0.45, canvas.height * 0.1, canvas.width - 50, canvas.height * 0.45);
-                ctx.stroke();
-
-                // Rocket Parametric Position
-                let p = (t % 350) / 350;
-                let rx = (1 - p) * (1 - p) * 60 + 2 * (1 - p) * p * (canvas.width * 0.45) + p * p * (canvas.width - 50);
-                let ry = (1 - p) * (1 - p) * (canvas.height - 30) + 2 * (1 - p) * p * (canvas.height * 0.1) + p * p * (canvas.height * 0.45);
-
-                // Add Exhaust Particles
-                if (exhaustParticles.length < 80) {
-                    exhaustParticles.push({
-                        x: rx + (Math.random() - 0.5) * 6,
-                        y: ry + 8,
-                        vx: (Math.random() - 0.5) * 1.5,
-                        vy: Math.random() * 3 + 2,
-                        life: 1
-                    });
-                }
-
-                for (let i = 0; i < exhaustParticles.length; i++) {
-                    let ep = exhaustParticles[i];
-                    ep.x += ep.vx; ep.y += ep.vy; ep.life -= 0.025;
-                    ctx.fillStyle = `rgba(255, 159, 67, ${ep.life})`;
-                    ctx.beginPath(); ctx.arc(ep.x, ep.y, 3.5, 0, Math.PI * 2); ctx.fill();
-                    if (ep.life <= 0) { exhaustParticles.splice(i, 1); i--; }
-                }
-
-                // Rocket Engine Flame Glow
-                let grad = ctx.createRadialGradient(rx, ry, 2, rx, ry, 18);
-                grad.addColorStop(0, '#ff9f43');
-                grad.addColorStop(1, 'transparent');
-                ctx.fillStyle = grad;
-                ctx.beginPath(); ctx.arc(rx, ry, 18, 0, Math.PI * 2); ctx.fill();
-
-                // Rocket Vehicle Silhouette
-                ctx.fillStyle = '#00d2ff';
-                ctx.beginPath(); ctx.arc(rx, ry, 5, 0, Math.PI * 2); ctx.fill();
-
-                t++;
-                modalAnimFrame = requestAnimationFrame(animate);
-            }
-            animate();
-        }
-
-        function runModalThruster(canvas) {
-            const ctx = canvas.getContext('2d');
-            canvas.width = 400; canvas.height = 300;
-            let parts = [];
-            function draw() {
-                ctx.fillStyle = '#020617'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#1e293b'; ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 2;
-                ctx.fillRect(160, 80, 80, 100); ctx.strokeRect(160, 80, 80, 100);
-                ctx.beginPath(); ctx.moveTo(160, 80); ctx.lineTo(200, 30); ctx.lineTo(240, 80); ctx.closePath();
-                ctx.fillStyle = '#00d2ff'; ctx.fill();
-                ctx.strokeStyle = '#38ef7d'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(200, 130); ctx.lineTo(200, 20); ctx.stroke();
-
-                if (parts.length < 60) {
-                    parts.push({ x: 200 + (Math.random() - 0.5) * 20, y: 180, vx: (Math.random() - 0.5) * 2, vy: Math.random() * 5 + 3, life: 1 });
-                }
-                for (let i = 0; i < parts.length; i++) {
-                    let p = parts[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-                    ctx.fillStyle = `rgba(255, 159, 67, ${p.life})`;
-                    ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
-                    if (p.life <= 0 || p.y > canvas.height) { parts.splice(i, 1); i--; }
-                }
-                modalAnimFrame = requestAnimationFrame(draw);
-            }
-            draw();
-        }
-
-        // Base Page Canvas Animations
-        const canvas1 = document.getElementById('rocketLaunchCanvas');
-        const ctx1 = canvas1.getContext('2d');
-        function resizeCanvas1() {
-            canvas1.width = canvas1.parentElement.clientWidth;
-            canvas1.height = canvas1.parentElement.clientHeight || 350;
-        }
-        resizeCanvas1();
-
-        let t1 = 0;
-        function animateLaunch() {
-            ctx1.fillStyle = '#030712'; ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
-            ctx1.fillStyle = '#ffffff';
-            for (let i = 0; i < 35; i++) {
-                let x = (Math.sin(i * 99) * 10000) % canvas1.width;
-                let y = (Math.cos(i * 33) * 10000) % canvas1.height;
-                ctx1.fillRect(Math.abs(x), Math.abs(y), 1.5, 1.5);
-            }
-            ctx1.beginPath();
-            ctx1.strokeStyle = 'rgba(0, 210, 255, 0.4)'; ctx1.lineWidth = 2; ctx1.setLineDash([5, 5]);
-            ctx1.moveTo(50, canvas1.height - 20);
-            ctx1.quadraticCurveTo(canvas1.width * 0.4, canvas1.height * 0.1, canvas1.width - 40, canvas1.height * 0.5);
-            ctx1.stroke();
-
-            let prog = (t1 % 300) / 300;
-            let rx = (1 - prog) * (1 - prog) * 50 + 2 * (1 - prog) * prog * (canvas1.width * 0.4) + prog * prog * (canvas1.width - 40);
-            let ry = (1 - prog) * (1 - prog) * (canvas1.height - 20) + 2 * (1 - prog) * prog * (canvas1.height * 0.1) + prog * prog * (canvas1.height * 0.5);
-
-            let grad = ctx1.createRadialGradient(rx, ry, 2, rx, ry, 15);
-            grad.addColorStop(0, '#ff9f43'); grad.addColorStop(1, 'transparent');
-            ctx1.fillStyle = grad; ctx1.beginPath(); ctx1.arc(rx, ry, 15, 0, Math.PI * 2); ctx1.fill();
-
-            ctx1.fillStyle = '#00d2ff'; ctx1.beginPath(); ctx1.arc(rx, ry, 4, 0, Math.PI * 2); ctx1.fill();
-            t1++;
-            requestAnimationFrame(animateLaunch);
-        }
-        animateLaunch();
-
-        const canvas4 = document.getElementById('thrusterCanvas');
-        const ctx4 = canvas4.getContext('2d');
-        canvas4.width = 400; canvas4.height = 300;
-        let particles = [];
-        function animateThruster() {
-            ctx4.fillStyle = '#020617'; ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
-            ctx4.fillStyle = '#1e293b'; ctx4.strokeStyle = '#00d2ff'; ctx4.lineWidth = 2;
-            ctx4.fillRect(160, 80, 80, 100); ctx4.strokeRect(160, 80, 80, 100);
-            ctx4.beginPath(); ctx4.moveTo(160, 80); ctx4.lineTo(200, 30); ctx4.lineTo(240, 80); ctx4.closePath();
-            ctx4.fillStyle = '#00d2ff'; ctx4.fill();
-            ctx4.strokeStyle = '#38ef7d'; ctx4.lineWidth = 4; ctx4.beginPath(); ctx4.moveTo(200, 130); ctx4.lineTo(200, 20); ctx4.stroke();
-
-            if (particles.length < 60) {
-                particles.push({ x: 200 + (Math.random() - 0.5) * 20, y: 180, vx: (Math.random() - 0.5) * 2, vy: Math.random() * 5 + 3, life: 1 });
-            }
-            for (let i = 0; i < particles.length; i++) {
-                let p = particles[i]; p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-                ctx4.fillStyle = `rgba(255, 159, 67, ${p.life})`;
-                ctx4.beginPath(); ctx4.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx4.fill();
-                if (p.life <= 0 || p.y > canvas4.height) { particles.splice(i, 1); i--; }
-            }
-            requestAnimationFrame(animateThruster);
-        }
-        animateThruster();
-
-        // Physics Sandbox Engine
+        // Physics Sandbox Engine (Slide 8)
         const sandboxCanvas = document.getElementById('orbitalSandboxCanvas');
         const sCtx = sandboxCanvas.getContext('2d');
-        sandboxCanvas.width = sandboxCanvas.parentElement.clientWidth;
-        sandboxCanvas.height = 420;
+
+        function resizeSandboxCanvas() {
+            if (sandboxCanvas.parentElement) {
+                sandboxCanvas.width = sandboxCanvas.parentElement.clientWidth || 800;
+            } else {
+                sandboxCanvas.width = 800;
+            }
+            sandboxCanvas.height = 420;
+        }
+        resizeSandboxCanvas();
+        window.addEventListener('resize', resizeSandboxCanvas);
 
         let orbitAngle = 0;
         let periapsisKm = 400;
@@ -711,10 +549,14 @@
             let cx = sandboxCanvas.width / 2;
             let cy = sandboxCanvas.height / 2;
 
+            // Draw Central Earth Body
             sCtx.beginPath();
             sCtx.arc(cx, cy, 45, 0, Math.PI * 2);
-            sCtx.fillStyle = '#0284c7'; sCtx.fill();
-            sCtx.strokeStyle = '#38bdf8'; sCtx.lineWidth = 3; sCtx.stroke();
+            sCtx.fillStyle = '#0284c7'; 
+            sCtx.fill();
+            sCtx.strokeStyle = '#38bdf8'; 
+            sCtx.lineWidth = 3; 
+            sCtx.stroke();
 
             let r_p = (R_Earth + periapsisKm);
             let a = r_p / (1 - eccentricity);
@@ -729,6 +571,7 @@
             let incRad = (inclinationDeg * Math.PI) / 180;
             let yCompress = Math.cos(incRad);
 
+            // Orbit Path
             sCtx.save();
             sCtx.translate(cx - cPx, cy);
             sCtx.scale(1, yCompress);
@@ -742,6 +585,7 @@
             sCtx.setLineDash([]);
             sCtx.restore();
 
+            // Satellite Position
             let trueAnomaly = orbitAngle;
             let r_current = (a * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(trueAnomaly));
             let r_px = r_current * scale + 45;
@@ -761,6 +605,7 @@
 
             requestAnimationFrame(renderSandbox);
         }
+
         updateTelemetry();
         renderSandbox();
     </script>
