@@ -127,36 +127,44 @@
 
         canvas.sim-canvas { width: 100%; height: 420px; background: #02040a; border-radius: 12px; border: 1px solid var(--card-border); }
 
-        /* Fullscreen Lightbox Styles */
-        .lightbox-modal {
+        /* Fixed Fullscreen Modal Presenter */
+        .lightbox-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(4, 7, 17, 0.98);
+            backdrop-filter: blur(12px);
             z-index: 1000;
-            padding: 30px;
-            flex-direction: column;
+            padding: 40px;
             justify-content: center;
             align-items: center;
         }
 
-        .lightbox-modal.active { display: flex; }
+        .lightbox-overlay.active { display: flex; }
 
-        .lightbox-container {
+        .lightbox-card {
             width: 90vw;
-            height: 85vh;
+            max-width: 1200px;
+            max-height: 90vh;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 32px;
-            overflow-y: auto;
+            border-radius: 20px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
             position: relative;
             box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            overflow-y: auto;
+        }
+
+        @media (min-width: 900px) {
+            .lightbox-card { grid-template-columns: 1fr 1fr; }
         }
 
         .lightbox-close {
             position: absolute;
-            top: 15px; right: 20px;
+            top: 20px; right: 20px;
             background: #162032;
             border: 1px solid var(--card-border);
             color: #fff;
@@ -165,6 +173,7 @@
             cursor: pointer;
             z-index: 1010;
         }
+        .lightbox-close:hover { background: #202d44; border-color: var(--accent-blue); }
 
         footer { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--card-border); margin-top: 40px; }
     </style>
@@ -182,12 +191,12 @@
     <div class="presentation-deck" id="deck">
 
         <!-- Slide 1: Title -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <canvas id="rocketLaunchCanvas" class="sim-canvas" style="height: 100%;"></canvas>
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 1: Title Slide (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 1: Title Slide</div>
                 <h2 class="slide-title">Rocket Science & Orbital Mechanics</h2>
                 <p style="color: var(--accent-blue); font-weight: 600; margin-bottom: 16px;">How Rockets Reach Space and Stay in Orbit</p>
                 <ul class="slide-bullet-list">
@@ -200,12 +209,12 @@
         </div>
 
         <!-- Slide 2: Speaker Profile -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <img src="IMG_0782.jpeg" alt="Speaker Profile">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 2: Speaker Profile (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 2: Speaker Profile</div>
                 <h2 class="slide-title">About Katie Carlson</h2>
                 <ul class="slide-bullet-list">
                     <li><strong>The Tech Side:</strong> CS major developing embedded software & telemetry loops for flight hardware.</li>
@@ -217,12 +226,12 @@
         </div>
 
         <!-- Slide 3: Definition of Space -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <img src="IMG_0783.jpeg" alt="Atmospheric Layers and Kármán Line">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 3: Definition of Space (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 3: Definition of Space</div>
                 <h2 class="slide-title">What is "Space"?</h2>
                 <ul class="slide-bullet-list">
                     <li>Space is closer than you think — only ~100 km (a 1-hour highway drive straight up).</li>
@@ -234,12 +243,12 @@
         </div>
 
         <!-- Slide 4: Propulsion -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <canvas id="thrusterCanvas" class="sim-canvas" style="height: 100%;"></canvas>
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 4: Part 1 - Propulsion (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 4: Part 1 - Propulsion</div>
                 <h2 class="slide-title">Leaving Earth: Newton's Third Law</h2>
                 <ul class="slide-bullet-list">
                     <li><strong>Action & Reaction:</strong> Force = d(mv)/dt. Expelling momentum downward drives payload upward.</li>
@@ -251,12 +260,12 @@
         </div>
 
         <!-- Slide 5: Rocket Dynamics -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <img src="image_6.png" alt="Cosmic Alignment & Payload Ratios">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 5: Rocket Dynamics (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 5: Rocket Dynamics</div>
                 <h2 class="slide-title">The Tyranny of the Rocket Equation</h2>
                 <ul class="slide-bullet-list">
                     <li><strong>Tsiolkovsky's Rocket Equation:</strong> Δv = v_e * ln(m0 / mf). Exponential fuel growth for linear speed gains.</li>
@@ -268,12 +277,12 @@
         </div>
 
         <!-- Slide 6: Orbital Mechanics -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <img src="image_9.png" alt="Newton's Cannonball Thought Experiment">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 6: Orbital Mechanics (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 6: Orbital Mechanics</div>
                 <h2 class="slide-title">What is an Orbit? (Falling Constantly)</h2>
                 <ul class="slide-bullet-list">
                     <li>Gravity in Low Earth Orbit is still ~90% of Earth's surface gravity!</li>
@@ -284,12 +293,12 @@
         </div>
 
         <!-- Slide 7: Orbital Speeds -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <img src="image_2.png" alt="Orbital Velocity Physics Diagram">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 7: Orbital Speeds (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 7: Orbital Speeds</div>
                 <h2 class="slide-title">The Speed of Space</h2>
                 <ul class="slide-bullet-list">
                     <li><strong>LEO Velocity:</strong> ~7.8 km/s (~17,500 mph / 28,000 km/h).</li>
@@ -370,12 +379,12 @@
         </div>
 
         <!-- Slide 9: Q&A & Wrap Up -->
-        <div class="slide-card" onclick="openLightbox(this)">
+        <div class="slide-card" onclick="openSlideModal(this)">
             <div class="slide-media">
                 <img src="image_8.png" alt="Sound Bowls & Mindfulness in Science">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 9: Q&A & Wrap Up (Click for Presenter View)</div>
+                <div class="slide-tag">Slide 9: Q&A & Wrap Up</div>
                 <h2 class="slide-title">Connecting the Dots</h2>
                 <p style="font-style: italic; color: var(--accent-blue); margin-bottom: 16px;">"The sky is not the limit; it is the starting point."</p>
                 <ul class="slide-bullet-list">
@@ -388,10 +397,13 @@
 
     </div>
 
-    <!-- Fullscreen Lightbox Modal -->
-    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
-        <button class="lightbox-close" onclick="closeLightbox()">Close (Esc)</button>
-        <div class="lightbox-container" id="lightboxContent" onclick="event.stopPropagation()"></div>
+    <!-- Modal Lightbox Presenter -->
+    <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeSlideModal()">
+        <div class="lightbox-card" id="lightboxCard" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeSlideModal()">Close (Esc)</button>
+            <div id="modalMediaContainer" class="slide-media" style="border-radius: 12px; overflow: hidden; min-height: 380px;"></div>
+            <div id="modalContentContainer" class="slide-content"></div>
+        </div>
     </div>
 
     <footer>
@@ -401,238 +413,76 @@
     <script>
         function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
 
-        // Fullscreen Presenter Lightbox
-        function openLightbox(slideCard) {
-            const modal = document.getElementById('lightboxModal');
-            const content = document.getElementById('lightboxContent');
-            content.innerHTML = slideCard.innerHTML;
-            modal.classList.add('active');
+        // Dynamic Modal Presenter Logic
+        let modalCanvasAnim = null;
+
+        function openSlideModal(card) {
+            const overlay = document.getElementById('lightboxOverlay');
+            const mediaBox = document.getElementById('modalMediaContainer');
+            const contentBox = document.getElementById('modalContentContainer');
+
+            mediaBox.innerHTML = '';
+            contentBox.innerHTML = '';
+
+            const origMedia = card.querySelector('.slide-media');
+            const origContent = card.querySelector('.slide-content');
+
+            if (origContent) contentBox.innerHTML = origContent.innerHTML;
+
+            // Check if media contains a image or canvas
+            const origImg = origMedia ? origMedia.querySelector('img') : null;
+            const origCanvas = origMedia ? origMedia.querySelector('canvas') : null;
+
+            if (origImg) {
+                const imgClone = document.createElement('img');
+                imgClone.src = origImg.src;
+                imgClone.alt = origImg.alt;
+                imgClone.style.width = '100%';
+                imgClone.style.height = '100%';
+                imgClone.style.objectFit = 'contain';
+                mediaBox.appendChild(imgClone);
+            } else if (origCanvas) {
+                const newCanvas = document.createElement('canvas');
+                newCanvas.className = 'sim-canvas';
+                newCanvas.style.height = '100%';
+                newCanvas.style.width = '100%';
+                mediaBox.appendChild(newCanvas);
+
+                if (origCanvas.id === 'rocketLaunchCanvas') {
+                    startModalLaunchAnim(newCanvas);
+                } else if (origCanvas.id === 'thrusterCanvas') {
+                    startModalThrusterAnim(newCanvas);
+                }
+            }
+
+            overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeLightbox() {
-            const modal = document.getElementById('lightboxModal');
-            modal.classList.remove('active');
+        function closeSlideModal() {
+            const overlay = document.getElementById('lightboxOverlay');
+            overlay.classList.remove('active');
             document.body.style.overflow = 'auto';
+            if (modalCanvasAnim) cancelAnimationFrame(modalCanvasAnim);
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'Escape') closeSlideModal();
         });
 
-        // Slide 1 Canvas
-        const canvas1 = document.getElementById('rocketLaunchCanvas');
-        const ctx1 = canvas1.getContext('2d');
-        function resizeCanvas1() {
-            canvas1.width = canvas1.parentElement.clientWidth;
-            canvas1.height = canvas1.parentElement.clientHeight || 350;
-        }
-        resizeCanvas1();
-
-        let t1 = 0;
-        function animateLaunch() {
-            ctx1.fillStyle = '#030712';
-            ctx1.fillRect(0, 0, canvas1.width, canvas1.height);
-            ctx1.fillStyle = '#ffffff';
-            for (let i = 0; i < 35; i++) {
-                let x = (Math.sin(i * 99) * 10000) % canvas1.width;
-                let y = (Math.cos(i * 33) * 10000) % canvas1.height;
-                ctx1.fillRect(Math.abs(x), Math.abs(y), 1.5, 1.5);
-            }
-            ctx1.beginPath();
-            ctx1.strokeStyle = 'rgba(0, 210, 255, 0.4)';
-            ctx1.lineWidth = 2;
-            ctx1.setLineDash([5, 5]);
-            ctx1.moveTo(50, canvas1.height - 20);
-            ctx1.quadraticCurveTo(canvas1.width * 0.4, canvas1.height * 0.1, canvas1.width - 40, canvas1.height * 0.5);
-            ctx1.stroke();
-
-            let prog = (t1 % 300) / 300;
-            let rx = (1 - prog) * (1 - prog) * 50 + 2 * (1 - prog) * prog * (canvas1.width * 0.4) + prog * prog * (canvas1.width - 40);
-            let ry = (1 - prog) * (1 - prog) * (canvas1.height - 20) + 2 * (1 - prog) * prog * (canvas1.height * 0.1) + prog * prog * (canvas1.height * 0.5);
-
-            let grad = ctx1.createRadialGradient(rx, ry, 2, rx, ry, 15);
-            grad.addColorStop(0, '#ff9f43');
-            grad.addColorStop(1, 'transparent');
-            ctx1.fillStyle = grad;
-            ctx1.beginPath(); ctx1.arc(rx, ry, 15, 0, Math.PI * 2); ctx1.fill();
-
-            ctx1.fillStyle = '#00d2ff';
-            ctx1.beginPath(); ctx1.arc(rx, ry, 4, 0, Math.PI * 2); ctx1.fill();
-            t1++;
-            requestAnimationFrame(animateLaunch);
-        }
-        animateLaunch();
-
-        // Slide 4 Canvas
-        const canvas4 = document.getElementById('thrusterCanvas');
-        const ctx4 = canvas4.getContext('2d');
-        canvas4.width = 400; canvas4.height = 300;
-        let particles = [];
-        function animateThruster() {
-            ctx4.fillStyle = '#020617'; ctx4.fillRect(0, 0, canvas4.width, canvas4.height);
-            ctx4.fillStyle = '#1e293b'; ctx4.strokeStyle = '#00d2ff'; ctx4.lineWidth = 2;
-            ctx4.fillRect(160, 80, 80, 100); ctx4.strokeRect(160, 80, 80, 100);
-            ctx4.beginPath(); ctx4.moveTo(160, 80); ctx4.lineTo(200, 30); ctx4.lineTo(240, 80); ctx4.closePath();
-            ctx4.fillStyle = '#00d2ff'; ctx4.fill();
-            ctx4.strokeStyle = '#38ef7d'; ctx4.lineWidth = 4; ctx4.beginPath(); ctx4.moveTo(200, 130); ctx4.lineTo(200, 20); ctx4.stroke();
-
-            if (particles.length < 60) {
-                particles.push({ x: 200 + (Math.random() - 0.5) * 20, y: 180, vx: (Math.random() - 0.5) * 2, vy: Math.random() * 5 + 3, life: 1 });
-            }
-            for (let i = 0; i < particles.length; i++) {
-                let p = particles[i];
-                p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-                ctx4.fillStyle = `rgba(255, 159, 67, ${p.life})`;
-                ctx4.beginPath(); ctx4.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx4.fill();
-                if (p.life <= 0 || p.y > canvas4.height) { particles.splice(i, 1); i--; }
-            }
-            requestAnimationFrame(animateThruster);
-        }
-        animateThruster();
-
-        // Physics Sandbox Engine
-        const sandboxCanvas = document.getElementById('orbitalSandboxCanvas');
-        const sCtx = sandboxCanvas.getContext('2d');
-        sandboxCanvas.width = sandboxCanvas.parentElement.clientWidth;
-        sandboxCanvas.height = 420;
-
-        let orbitAngle = 0;
-        let periapsisKm = 400;
-        let eccentricity = 0;
-        let inclinationDeg = 0;
-        let isPaused = false;
-        let inHohmann = false;
-        let deltaVBoost = 0;
-
-        const G = 6.674e-11;
-        const M = 5.972e24;
-        const R_Earth = 6371;
-
-        function togglePause() {
-            isPaused = !isPaused;
-            document.getElementById('pauseBtn').innerText = isPaused ? "Resume" : "Pause";
-        }
-
-        function resetSim() {
-            periapsisKm = 400;
-            eccentricity = 0;
-            inclinationDeg = 0;
-            deltaVBoost = 0;
-            inHohmann = false;
-            document.getElementById('altSlider').value = 400;
-            document.getElementById('eccSlider').value = 0;
-            document.getElementById('incSlider').value = 0;
-            updateTelemetry();
-        }
-
-        function updateBaseAltitude() {
-            periapsisKm = parseFloat(document.getElementById('altSlider').value);
-            updateTelemetry();
-        }
-
-        function updateEccentricity() {
-            eccentricity = parseFloat(document.getElementById('eccSlider').value);
-            updateTelemetry();
-        }
-
-        function updateInclination() {
-            inclinationDeg = parseFloat(document.getElementById('incSlider').value);
-            updateTelemetry();
-        }
-
-        function applyDeltaV(amount) {
-            deltaVBoost += amount;
-            eccentricity = Math.min(0.7, Math.max(0, eccentricity + amount * 0.1));
-            document.getElementById('eccSlider').value = eccentricity.toFixed(2);
-            updateTelemetry();
-        }
-
-        function triggerHohmannTransfer() {
-            inHohmann = true;
-            periapsisKm = 400;
-            eccentricity = 0.55;
-            document.getElementById('altSlider').value = 400;
-            document.getElementById('eccSlider').value = 0.55;
-            updateTelemetry();
-        }
-
-        function updateTelemetry() {
-            let r_p = (R_Earth + periapsisKm) * 1000;
-            let a = r_p / (1 - eccentricity);
-            let r_a = a * (1 + eccentricity);
-            let apoapsisKm = (r_a / 1000) - R_Earth;
-
-            let v_p = Math.sqrt((G * M) * ((2 / r_p) - (1 / a))) / 1000 + deltaVBoost;
-            let periodSec = 2 * Math.PI * Math.sqrt(Math.pow(a, 3) / (G * M));
-
-            document.getElementById('valVel').innerText = v_p.toFixed(2) + " km/s";
-            document.getElementById('valAlt').innerText = Math.round(periapsisKm) + " km";
-            document.getElementById('valApo').innerText = Math.round(apoapsisKm) + " km";
-            document.getElementById('valEcc').innerText = eccentricity.toFixed(3);
-            document.getElementById('valInc').innerText = inclinationDeg.toFixed(1) + "°";
-            document.getElementById('valPeriod').innerText = (periodSec / 60).toFixed(1) + " min";
-        }
-
-        function renderSandbox() {
-            sCtx.fillStyle = '#02040a';
-            sCtx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
-
-            let cx = sandboxCanvas.width / 2;
-            let cy = sandboxCanvas.height / 2;
-
-            sCtx.beginPath();
-            sCtx.arc(cx, cy, 45, 0, Math.PI * 2);
-            sCtx.fillStyle = '#0284c7'; sCtx.fill();
-            sCtx.strokeStyle = '#38bdf8'; sCtx.lineWidth = 3; sCtx.stroke();
-
-            let r_p = (R_Earth + periapsisKm);
-            let a = r_p / (1 - eccentricity);
-            let scale = 110 / 35786; 
-
-            let pxApo = a * (1 + eccentricity) * scale + 45;
-            let pxPeri = r_p * scale + 45;
-            let semiMajorPx = (pxApo + pxPeri) / 2;
-            let semiMinorPx = semiMajorPx * Math.sqrt(1 - eccentricity * eccentricity);
-            let cPx = semiMajorPx - pxPeri; 
-
-            let incRad = (inclinationDeg * Math.PI) / 180;
-            let yCompress = Math.cos(incRad);
-
-            sCtx.save();
-            sCtx.translate(cx - cPx, cy);
-            sCtx.scale(1, yCompress);
-
-            sCtx.beginPath();
-            sCtx.ellipse(0, 0, semiMajorPx, semiMinorPx, 0, 0, Math.PI * 2);
-            sCtx.strokeStyle = inHohmann ? '#9d4edd' : 'rgba(0, 210, 255, 0.5)';
-            sCtx.lineWidth = inHohmann ? 2.5 : 1.5;
-            sCtx.setLineDash(inHohmann ? [6, 4] : [4, 4]);
-            sCtx.stroke();
-            sCtx.setLineDash([]);
-            sCtx.restore();
-
-            let trueAnomaly = orbitAngle;
-            let r_current = (a * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(trueAnomaly));
-            let r_px = r_current * scale + 45;
-
-            let satX = cx - cPx + r_px * Math.cos(trueAnomaly);
-            let satY = cy + (r_px * Math.sin(trueAnomaly)) * yCompress;
-
-            sCtx.fillStyle = inHohmann ? '#ff9f43' : '#38ef7d';
-            sCtx.beginPath();
-            sCtx.arc(satX, satY, 6, 0, Math.PI * 2);
-            sCtx.fill();
-
-            if (!isPaused) {
-                let speed = 0.012 * Math.pow(a / (R_Earth + 400), -1.2);
-                orbitAngle += speed;
-            }
-
-            requestAnimationFrame(renderSandbox);
-        }
-        updateTelemetry();
-        renderSandbox();
-    </script>
-</body>
-</html>
+        // Re-binding canvas animations for full-screen presenter
+        function startModalLaunchAnim(c) {
+            const ctx = c.getContext('2d');
+            c.width = c.parentElement.clientWidth || 400;
+            c.height = 380;
+            let step = 0;
+            function draw() {
+                ctx.fillStyle = '#030712'; ctx.fillRect(0, 0, c.width, c.height);
+                ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < 35; i++) {
+                    let x = (Math.sin(i * 99) * 10000) % c.width;
+                    let y = (Math.cos(i * 33) * 10000) % c.height;
+                    ctx.fillRect(Math.abs(x), Math.abs(y), 1.5, 1.5);
+                }
+                let prog = (step % 300) / 300;
+                let rx = (1 - prog) * (1 - prog) * 50 + 2 * (1 - prog) * prog * (c.width *
