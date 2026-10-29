@@ -76,45 +76,11 @@
             grid-template-columns: 1fr;
             cursor: pointer;
             transition: transform 0.2s ease, border-color 0.2s ease;
-            position: relative;
         }
 
         .slide-card:hover {
             transform: translateY(-4px);
             border-color: var(--accent-blue);
-        }
-
-        /* Fullscreen Overlay Capture Layer */
-        .click-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 10;
-            cursor: pointer;
-        }
-
-        /* Native Fullscreen Styles */
-        .slide-card:fullscreen {
-            width: 100vw !important;
-            height: 100vh !important;
-            border-radius: 0 !important;
-            padding: 40px !important;
-            background: var(--bg-dark) !important;
-            display: grid !important;
-            align-items: center !important;
-            justify-content: center !important;
-            overflow-y: auto !important;
-        }
-
-        .slide-card:-webkit-full-screen {
-            width: 100vw !important;
-            height: 100vh !important;
-            border-radius: 0 !important;
-            padding: 40px !important;
-            background: var(--bg-dark) !important;
-            display: grid !important;
-            align-items: center !important;
-            justify-content: center !important;
-            overflow-y: auto !important;
         }
 
         @media (min-width: 900px) {
@@ -132,20 +98,14 @@
 
         .slide-media img { width: 100%; height: 100%; object-fit: contain; }
 
-        .slide-content { 
-            padding: 32px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-        }
-        
+        .slide-content { padding: 32px; display: flex; flex-direction: column; justify-content: center; }
         .slide-tag { font-size: 0.8rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
         .slide-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 16px; color: #fff; }
         .slide-bullet-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
         .slide-bullet-list li { position: relative; padding-left: 20px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
         .slide-bullet-list li::before { content: "•"; color: var(--accent-blue); font-weight: bold; font-size: 1.2rem; position: absolute; left: 0; top: -2px; }
 
-        .sandbox-container { grid-column: 1 / -1; padding: 24px; display: flex; flex-direction: column; gap: 20px; z-index: 20; position: relative; }
+        .sandbox-container { grid-column: 1 / -1; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
         .sandbox-controls {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -167,6 +127,45 @@
 
         canvas.sim-canvas { width: 100%; height: 420px; background: #02040a; border-radius: 12px; border: 1px solid var(--card-border); }
 
+        /* Fullscreen Lightbox Styles */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(4, 7, 17, 0.98);
+            z-index: 1000;
+            padding: 30px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox-modal.active { display: flex; }
+
+        .lightbox-container {
+            width: 90vw;
+            height: 85vh;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            background: #162032;
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 1010;
+        }
+
         footer { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--card-border); margin-top: 40px; }
     </style>
 </head>
@@ -183,13 +182,12 @@
     <div class="presentation-deck" id="deck">
 
         <!-- Slide 1: Title -->
-        <div class="slide-card" id="slide1">
-            <div class="click-overlay" onclick="toggleFullscreen(document.getElementById('slide1'))"></div>
+        <div class="slide-card" onclick="openLightbox(this)">
             <div class="slide-media">
                 <canvas id="rocketLaunchCanvas" class="sim-canvas" style="height: 100%;"></canvas>
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 1: Title Slide (Click for Fullscreen)</div>
+                <div class="slide-tag">Slide 1: Title Slide (Click for Presenter View)</div>
                 <h2 class="slide-title">Rocket Science & Orbital Mechanics</h2>
                 <p style="color: var(--accent-blue); font-weight: 600; margin-bottom: 16px;">How Rockets Reach Space and Stay in Orbit</p>
                 <ul class="slide-bullet-list">
@@ -202,13 +200,12 @@
         </div>
 
         <!-- Slide 2: Speaker Profile -->
-        <div class="slide-card" id="slide2">
-            <div class="click-overlay" onclick="toggleFullscreen(document.getElementById('slide2'))"></div>
+        <div class="slide-card" onclick="openLightbox(this)">
             <div class="slide-media">
                 <img src="IMG_0782.jpeg" alt="Speaker Profile">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 2: Speaker Profile (Click for Fullscreen)</div>
+                <div class="slide-tag">Slide 2: Speaker Profile (Click for Presenter View)</div>
                 <h2 class="slide-title">About Katie Carlson</h2>
                 <ul class="slide-bullet-list">
                     <li><strong>The Tech Side:</strong> CS major developing embedded software & telemetry loops for flight hardware.</li>
@@ -220,13 +217,12 @@
         </div>
 
         <!-- Slide 3: Definition of Space -->
-        <div class="slide-card" id="slide3">
-            <div class="click-overlay" onclick="toggleFullscreen(document.getElementById('slide3'))"></div>
+        <div class="slide-card" onclick="openLightbox(this)">
             <div class="slide-media">
                 <img src="IMG_0783.jpeg" alt="Atmospheric Layers and Kármán Line">
             </div>
             <div class="slide-content">
-                <div class="slide-tag">Slide 3: Definition of Space (Click for Fullscreen)</div>
+                <div class="slide-tag">Slide 3: Definition of Space (Click for Presenter View)</div>
                 <h2 class="slide-title">What is "Space"?</h2>
                 <ul class="slide-bullet-list">
                     <li>Space is closer than you think — only ~100 km (a 1-hour highway drive straight up).</li>
@@ -238,7 +234,132 @@
         </div>
 
         <!-- Slide 4: Propulsion -->
-        <div class="slide-card" id="slide4">
-            <div class="click-overlay" onclick="toggleFullscreen(document.getElementById('slide4'))"></div>
+        <div class="slide-card" onclick="openLightbox(this)">
             <div class="slide-media">
-                <canvas id="thrusterCanvas" class="sim-canvas" style="height
+                <canvas id="thrusterCanvas" class="sim-canvas" style="height: 100%;"></canvas>
+            </div>
+            <div class="slide-content">
+                <div class="slide-tag">Slide 4: Part 1 - Propulsion (Click for Presenter View)</div>
+                <h2 class="slide-title">Leaving Earth: Newton's Third Law</h2>
+                <ul class="slide-bullet-list">
+                    <li><strong>Action & Reaction:</strong> Force = d(mv)/dt. Expelling momentum downward drives payload upward.</li>
+                    <li><strong>Vacuum Propulsion:</strong> Rockets push against their own exhaust momentum, not atmospheric air.</li>
+                    <li><strong>Thrust Vector Control (TVC):</strong> Gimbaling engines to control pitch, yaw, and flight stability.</li>
+                    <li><strong>Atmospheric Drag:</strong> Overcoming dynamic resistance during dense atmospheric ascent.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 5: Rocket Dynamics -->
+        <div class="slide-card" onclick="openLightbox(this)">
+            <div class="slide-media">
+                <img src="image_6.png" alt="Cosmic Alignment & Payload Ratios">
+            </div>
+            <div class="slide-content">
+                <div class="slide-tag">Slide 5: Rocket Dynamics (Click for Presenter View)</div>
+                <h2 class="slide-title">The Tyranny of the Rocket Equation</h2>
+                <ul class="slide-bullet-list">
+                    <li><strong>Tsiolkovsky's Rocket Equation:</strong> Δv = v_e * ln(m0 / mf). Exponential fuel growth for linear speed gains.</li>
+                    <li><strong>Mass Breakdown:</strong> Typical rockets are ~90% propellant, ~9% dry structure, and only ~1% payload.</li>
+                    <li><strong>Multistage Rockets:</strong> Shedding empty propellant tanks to decrease dry mass and optimize energy efficiency.</li>
+                    <li><strong>Max Q:</strong> Point of maximum dynamic pressure where structural strain peaks.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Orbital Mechanics -->
+        <div class="slide-card" onclick="openLightbox(this)">
+            <div class="slide-media">
+                <img src="image_9.png" alt="Newton's Cannonball Thought Experiment">
+            </div>
+            <div class="slide-content">
+                <div class="slide-tag">Slide 6: Orbital Mechanics (Click for Presenter View)</div>
+                <h2 class="slide-title">What is an Orbit? (Falling Constantly)</h2>
+                <ul class="slide-bullet-list">
+                    <li>Gravity in Low Earth Orbit is still ~90% of Earth's surface gravity!</li>
+                    <li>An orbit is <strong>free-fall along a curved spacetime geodesic</strong> matching Earth's curvature.</li>
+                    <li><strong>Newton's Cannonball:</strong> Fire a projectile fast enough horizontally so the curve of its trajectory matches the curvature of Earth.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 7: Orbital Speeds -->
+        <div class="slide-card" onclick="openLightbox(this)">
+            <div class="slide-media">
+                <img src="image_2.png" alt="Orbital Velocity Physics Diagram">
+            </div>
+            <div class="slide-content">
+                <div class="slide-tag">Slide 7: Orbital Speeds (Click for Presenter View)</div>
+                <h2 class="slide-title">The Speed of Space</h2>
+                <ul class="slide-bullet-list">
+                    <li><strong>LEO Velocity:</strong> ~7.8 km/s (~17,500 mph / 28,000 km/h).</li>
+                    <li><strong>Orbital Period:</strong> ~90 to 92 minutes in Low Earth Orbit.</li>
+                    <li><strong>Escape Velocity:</strong> ~11.2 km/s breaks bound orbit into interplanetary trajectories.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Interactive Orbital Sandbox -->
+        <div class="slide-card" id="simulator" style="cursor: default;">
+            <div class="slide-media" style="grid-column: 1 / -1; min-height: auto;">
+                <div class="sandbox-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <span class="slide-tag">Slide 8: Interactive Orbit & Maneuver Simulator</span>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="nav-btn" onclick="togglePause()" id="pauseBtn">Pause</button>
+                            <button class="nav-btn" onclick="resetSim()">Reset Orbit</button>
+                        </div>
+                    </div>
+
+                    <canvas id="orbitalSandboxCanvas" class="sim-canvas"></canvas>
+
+                    <div class="readout-grid">
+                        <div class="readout-card">
+                            <div class="readout-val" id="valVel">7.67 km/s</div>
+                            <div class="readout-lbl">Orbital Speed</div>
+                        </div>
+                        <div class="readout-card">
+                            <div class="readout-val" id="valAlt">400 km</div>
+                            <div class="readout-lbl">Altitude (Periapsis)</div>
+                        </div>
+                        <div class="readout-card">
+                            <div class="readout-val" id="valApo">400 km</div>
+                            <div class="readout-lbl">Apoapsis Altitude</div>
+                        </div>
+                        <div class="readout-card">
+                            <div class="readout-val" id="valEcc">0.000</div>
+                            <div class="readout-lbl">Eccentricity (e)</div>
+                        </div>
+                        <div class="readout-card">
+                            <div class="readout-val" id="valInc">0.0°</div>
+                            <div class="readout-lbl">Inclination (i)</div>
+                        </div>
+                        <div class="readout-card">
+                            <div class="readout-val" id="valPeriod">92.6 min</div>
+                            <div class="readout-lbl">Orbital Period</div>
+                        </div>
+                    </div>
+
+                    <div class="sandbox-controls">
+                        <div class="control-item">
+                            <label>Base Altitude Adjuster (km)</label>
+                            <input type="range" id="altSlider" min="160" max="35786" value="400" oninput="updateBaseAltitude()">
+                        </div>
+                        <div class="control-item">
+                            <label>Eccentricity Shape (e)</label>
+                            <input type="range" id="eccSlider" min="0" max="0.7" step="0.01" value="0" oninput="updateEccentricity()">
+                        </div>
+                        <div class="control-item">
+                            <label>Inclination Angle (deg)</label>
+                            <input type="range" id="incSlider" min="0" max="60" step="1" value="0" oninput="updateInclination()">
+                        </div>
+                        <div class="control-item">
+                            <label>Impulse Maneuvers (Δv Burn)</label>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(0.3)">Prograde (+Δv)</button>
+                                <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(-0.3)">Retrograde (-Δv)</button>
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <label>Orbital Transfers</label>
+                            <button class="
