@@ -411,9 +411,11 @@
     </footer>
 
     <script>
-        function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+        function scrollToSection(id) { 
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); 
+        }
 
-        // Modal Handler
+        // Modal Lightbox Presenter
         function openSlideModal(card, slideNum) {
             const overlay = document.getElementById('lightboxOverlay');
             const mediaBox = document.getElementById('modalMediaContainer');
@@ -549,7 +551,7 @@
             let cx = sandboxCanvas.width / 2;
             let cy = sandboxCanvas.height / 2;
 
-            // Draw Central Earth Body
+            // Central Earth Body
             sCtx.beginPath();
             sCtx.arc(cx, cy, 45, 0, Math.PI * 2);
             sCtx.fillStyle = '#0284c7'; 
