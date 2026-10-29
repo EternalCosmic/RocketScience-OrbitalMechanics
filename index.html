@@ -358,72 +358,84 @@
     </footer>
 
     <script>
-        const sandboxCanvas = document.getElementById('orbitalSandboxCanvas');
-        const sCtx = sandboxCanvas.getContext('2d');
-        sandboxCanvas.width = sandboxCanvas.parentElement.clientWidth - 40;
-        sandboxCanvas.height = 320;
+        document.addEventListener('DOMContentLoaded', function() {
+            const sandboxCanvas = document.getElementById('orbitalSandboxCanvas');
+            if (!sandboxCanvas) return;
+            
+            const sCtx = sandboxCanvas.getContext('2d');
+            
+            function resizeCanvas() {
+                sandboxCanvas.width = sandboxCanvas.parentElement.clientWidth - 40;
+                sandboxCanvas.height = 320;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
 
-        let orbitAngle = 0;
-        let altKm = 400;
-        let deltaVBoost = 0;
+            let orbitAngle = 0;
+            let altKm = 400;
+            let deltaVBoost = 0;
 
-        function updateOrbitPhysics() {
-            altKm = parseFloat(document.getElementById('altSlider').value);
-            let G = 6.674e-11;
-            let M = 5.972e24;
-            let r = (6371 + altKm) * 1000;
-            let v = Math.sqrt((G * M) / r) / 1000 + deltaVBoost;
-            let periodSec = 2 * Math.PI * Math.sqrt(Math.pow(r, 3) / (G * M));
+            window.updateOrbitPhysics = function() {
+                const slider = document.getElementById('altSlider');
+                if (!slider) return;
+                altKm = parseFloat(slider.value);
+                let G = 6.674e-11;
+                let M = 5.972e24;
+                let r = (6371 + altKm) * 1000;
+                let v = Math.sqrt((G * M) / r) / 1000 + deltaVBoost;
+                let periodSec = 2 * Math.PI * Math.sqrt(Math.pow(r, 3) / (G * M));
 
-            document.getElementById('valVel').innerText = v.toFixed(2) + " km/s";
-            document.getElementById('valAlt').innerText = Math.round(altKm) + " km";
-            document.getElementById('valPeriod').innerText = (periodSec / 60).toFixed(1) + " min";
-        }
+                document.getElementById('valVel').innerText = v.toFixed(2) + " km/s";
+                document.getElementById('valAlt').innerText = Math.round(altKm) + " km";
+                document.getElementById('valPeriod').innerText = (periodSec / 60).toFixed(1) + " min";
+            };
 
-        function applyDeltaV(amount) {
-            deltaVBoost += amount;
-            updateOrbitPhysics();
-        }
+            window.applyDeltaV = function(amount) {
+                deltaVBoost += amount;
+                window.updateOrbitPhysics();
+            };
 
-        function renderSandbox() {
-            sCtx.fillStyle = '#02040a';
-            sCtx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
+            function renderSandbox() {
+                sCtx.fillStyle = '#02040a';
+                sCtx.fillRect(0, 0, sandboxCanvas.width, sandboxCanvas.height);
 
-            let cx = sandboxCanvas.width / 2;
-            let cy = sandboxCanvas.height / 2;
+                let cx = sandboxCanvas.width / 2;
+                let cy = sandboxCanvas.height / 2;
 
-            sCtx.beginPath();
-            sCtx.arc(cx, cy, 40, 0, Math.PI * 2);
-            sCtx.fillStyle = '#0284c7';
-            sCtx.fill();
-            sCtx.strokeStyle = '#38bdf8';
-            sCtx.lineWidth = 2;
-            sCtx.stroke();
+                sCtx.beginPath();
+                sCtx.arc(cx, cy, 40, 0, Math.PI * 2);
+                sCtx.fillStyle = '#0284c7';
+                sCtx.fill();
+                sCtx.strokeStyle = '#38bdf8';
+                sCtx.lineWidth = 2;
+                sCtx.stroke();
 
-            let orbRadius = 40 + (altKm / 35786) * 90 + 25;
+                let orbRadius = 40 + (altKm / 35786) * 90 + 25;
 
-            sCtx.beginPath();
-            sCtx.arc(cx, cy, orbRadius, 0, Math.PI * 2);
-            sCtx.strokeStyle = 'rgba(0, 210, 255, 0.4)';
-            sCtx.lineWidth = 1.5;
-            sCtx.setLineDash([4, 4]);
-            sCtx.stroke();
-            sCtx.setLineDash([]);
+                sCtx.beginPath();
+                sCtx.arc(cx, cy, orbRadius, 0, Math.PI * 2);
+                sCtx.strokeStyle = 'rgba(0, 210, 255, 0.4)';
+                sCtx.lineWidth = 1.5;
+                sCtx.setLineDash([4, 4]);
+                sCtx.stroke();
+                sCtx.setLineDash([]);
 
-            let satX = cx + Math.cos(orbitAngle) * orbRadius;
-            let satY = cy + Math.sin(orbitAngle) * orbRadius;
+                let satX = cx + Math.cos(orbitAngle) * orbRadius;
+                let satY = cy + Math.sin(orbitAngle) * orbRadius;
 
-            sCtx.fillStyle = '#38ef7d';
-            sCtx.beginPath();
-            sCtx.arc(satX, satY, 5, 0, Math.PI * 2);
-            sCtx.fill();
+                sCtx.fillStyle = '#38ef7d';
+                sCtx.beginPath();
+                sCtx.arc(satX, satY, 5, 0, Math.PI * 2);
+                sCtx.fill();
 
-            orbitAngle += 0.015;
-            requestAnimationFrame(renderSandbox);
-        }
+                orbitAngle += 0.015;
+                requestAnimationFrame(renderSandbox);
+            }
 
-        updateOrbitPhysics();
-        renderSandbox();
+            window.updateOrbitPhysics();
+            renderSandbox();
+        });
     </script>
 </body>
 </html>
