@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rocket Science & Orbital Mechanics - Webinar Presentation Deck</title>
+    <title>Rocket Science & Orbital Mechanics - Webinar Deck</title>
     <style>
         :root {
             --bg-dark: #040711;
@@ -74,7 +74,6 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             display: grid;
             grid-template-columns: 1fr;
-            transition: transform 0.2s ease;
         }
 
         @media (min-width: 900px) {
@@ -111,8 +110,8 @@
         }
 
         .control-item { display: flex; flex-direction: column; gap: 8px; }
-        .control-item label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; }
-        .control-item input[type="range"] { accent-color: var(--accent-blue); }
+        .control-item label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .control-item input[type="range"] { accent-color: var(--accent-blue); cursor: pointer; }
 
         .readout-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; text-align: center; }
         .readout-card { background: #060a14; border: 1px solid var(--card-border); padding: 12px; border-radius: 8px; }
@@ -148,7 +147,7 @@
                     <li><strong>Presenter:</strong> Katie Carlson</li>
                     <li><strong>Role:</strong> Command & Data Handling Engineer, NASA L'SPACE Academy</li>
                     <li><strong>Affiliation:</strong> California Polytechnic State University (Cal Poly)</li>
-                    <li><strong>Fields:</strong> Computer Science Major; Physics & Aerospace Engineering Minors</li>
+                    <li><strong>Fields:</strong> Computer Science Major; Physics & Aerospace Minors</li>
                 </ul>
             </div>
         </div>
@@ -196,8 +195,8 @@
                 <div class="slide-tag">Slide 4: Part 1 - Propulsion</div>
                 <h2 class="slide-title">Leaving Earth: Newton's Third Law</h2>
                 <ul class="slide-bullet-list">
-                    <li><strong>Action & Reaction:</strong> Force = $\frac{d(mv)}{dt}$. Expelling momentum downward drives payload upward.</li>
-                    <li><strong>Vacuum Propulsion:</strong> Rockets do not push against atmospheric air — they push against their own exhaust momentum.</li>
+                    <li><strong>Action & Reaction:</strong> Force = d(mv)/dt. Expelling momentum downward drives payload upward.</li>
+                    <li><strong>Vacuum Propulsion:</strong> Rockets push against their own exhaust momentum, not atmospheric air.</li>
                     <li><strong>Thrust Vector Control (TVC):</strong> Gimbaling engines to control pitch, yaw, and flight stability.</li>
                     <li><strong>Atmospheric Drag:</strong> Overcoming dynamic resistance during dense atmospheric ascent.</li>
                 </ul>
@@ -213,10 +212,10 @@
                 <div class="slide-tag">Slide 5: Rocket Dynamics</div>
                 <h2 class="slide-title">The Tyranny of the Rocket Equation</h2>
                 <ul class="slide-bullet-list">
-                    <li><strong>Tsiolkovsky's Rocket Equation:</strong> $\Delta v = v_e \ln\left(\frac{m_0}{m_f}\right)$. Exponential fuel growth for linear speed gains.</li>
+                    <li><strong>Tsiolkovsky's Rocket Equation:</strong> Δv = v_e * ln(m0 / mf). Exponential fuel growth for linear speed gains.</li>
                     <li><strong>Mass Breakdown:</strong> Typical rockets are ~90% propellant, ~9% dry structure, and only ~1% payload.</li>
-                    <li><strong>Multistage Rockets:</strong> Shedding empty propellant tanks to decrease $m_f$ and optimize energy efficiency.</li>
-                    <li><strong>Max Q:</strong> Point of maximum dynamic pressure ($\frac{1}{2}\rho v^2$) where structural strain peaks.</li>
+                    <li><strong>Multistage Rockets:</strong> Shedding empty propellant tanks to decrease dry mass and optimize energy efficiency.</li>
+                    <li><strong>Max Q:</strong> Point of maximum dynamic pressure where structural strain peaks.</li>
                 </ul>
             </div>
         </div>
@@ -246,9 +245,9 @@
                 <div class="slide-tag">Slide 7: Orbital Speeds</div>
                 <h2 class="slide-title">The Speed of Space</h2>
                 <ul class="slide-bullet-list">
-                    <li><strong>LEO Velocity:</strong> Circular velocity $v_c = \sqrt{\frac{\mu}{r}} \approx 7.8\text{ km/s}$ (~17,500 mph / 28,000 km/h).</li>
-                    <li><strong>Orbital Period:</strong> $T = 2\pi\sqrt{\frac{a^3}{\mu}} \approx 90\text{ to }92\text{ minutes}$ in LEO.</li>
-                    <li><strong>Sub-orbital vs. Escape Velocity:</strong> $v < v_c$ returns to surface; $v \ge v_{esc} = \sqrt{2}v_c \approx 11.2\text{ km/s}$ breaks bound orbit into interplanetary trajectories.</li>
+                    <li><strong>LEO Velocity:</strong> ~7.8 km/s (~17,500 mph / 28,000 km/h).</li>
+                    <li><strong>Orbital Period:</strong> ~90 to 92 minutes in Low Earth Orbit.</li>
+                    <li><strong>Escape Velocity:</strong> ~11.2 km/s breaks bound orbit into interplanetary trajectories.</li>
                 </ul>
             </div>
         </div>
@@ -282,7 +281,11 @@
                         </div>
                         <div class="readout-card">
                             <div class="readout-val" id="valEcc">0.000</div>
-                            <div class="readout-lbl">Eccentricity ($e$)</div>
+                            <div class="readout-lbl">Eccentricity (e)</div>
+                        </div>
+                        <div class="readout-card">
+                            <div class="readout-val" id="valInc">0.0°</div>
+                            <div class="readout-lbl">Inclination (i)</div>
                         </div>
                         <div class="readout-card">
                             <div class="readout-val" id="valPeriod">92.6 min</div>
@@ -296,14 +299,18 @@
                             <input type="range" id="altSlider" min="160" max="35786" value="400" oninput="updateBaseAltitude()">
                         </div>
                         <div class="control-item">
-                            <label>Eccentricity Shape ($e$)</label>
+                            <label>Eccentricity Shape (e)</label>
                             <input type="range" id="eccSlider" min="0" max="0.7" step="0.01" value="0" oninput="updateEccentricity()">
                         </div>
                         <div class="control-item">
-                            <label>Impulse Maneuvers ($\Delta v$ Burn)</label>
+                            <label>Inclination Angle (deg)</label>
+                            <input type="range" id="incSlider" min="0" max="60" step="1" value="0" oninput="updateInclination()">
+                        </div>
+                        <div class="control-item">
+                            <label>Impulse Maneuvers (Δv Burn)</label>
                             <div style="display: flex; gap: 8px;">
-                                <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(0.3)">Prograde (+$\Delta v$)</button>
-                                <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(-0.3)">Retrograde (-$\Delta v$)</button>
+                                <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(0.3)">Prograde (+Δv)</button>
+                                <button class="nav-btn" style="flex: 1;" onclick="applyDeltaV(-0.3)">Retrograde (-Δv)</button>
                             </div>
                         </div>
                         <div class="control-item">
@@ -412,7 +419,7 @@
         }
         animateThruster();
 
-        // Upgraded Physics Sandbox
+        // Physics Sandbox Engine
         const sandboxCanvas = document.getElementById('orbitalSandboxCanvas');
         const sCtx = sandboxCanvas.getContext('2d');
         sandboxCanvas.width = sandboxCanvas.parentElement.clientWidth;
@@ -421,9 +428,9 @@
         let orbitAngle = 0;
         let periapsisKm = 400;
         let eccentricity = 0;
+        let inclinationDeg = 0;
         let isPaused = false;
         let inHohmann = false;
-        let hohmannStep = 0;
         let deltaVBoost = 0;
 
         const G = 6.674e-11;
@@ -438,10 +445,12 @@
         function resetSim() {
             periapsisKm = 400;
             eccentricity = 0;
+            inclinationDeg = 0;
             deltaVBoost = 0;
             inHohmann = false;
             document.getElementById('altSlider').value = 400;
             document.getElementById('eccSlider').value = 0;
+            document.getElementById('incSlider').value = 0;
             updateTelemetry();
         }
 
@@ -452,6 +461,11 @@
 
         function updateEccentricity() {
             eccentricity = parseFloat(document.getElementById('eccSlider').value);
+            updateTelemetry();
+        }
+
+        function updateInclination() {
+            inclinationDeg = parseFloat(document.getElementById('incSlider').value);
             updateTelemetry();
         }
 
@@ -484,6 +498,7 @@
             document.getElementById('valAlt').innerText = Math.round(periapsisKm) + " km";
             document.getElementById('valApo').innerText = Math.round(apoapsisKm) + " km";
             document.getElementById('valEcc').innerText = eccentricity.toFixed(3);
+            document.getElementById('valInc').innerText = inclinationDeg.toFixed(1) + "°";
             document.getElementById('valPeriod').innerText = (periodSec / 60).toFixed(1) + " min";
         }
 
@@ -494,13 +509,13 @@
             let cx = sandboxCanvas.width / 2;
             let cy = sandboxCanvas.height / 2;
 
-            // Earth
+            // Draw Earth
             sCtx.beginPath();
             sCtx.arc(cx, cy, 45, 0, Math.PI * 2);
             sCtx.fillStyle = '#0284c7'; sCtx.fill();
             sCtx.strokeStyle = '#38bdf8'; sCtx.lineWidth = 3; sCtx.stroke();
 
-            // Orbit Parametric Plotting
+            // Calculate Orbit Geometry
             let r_p = (R_Earth + periapsisKm);
             let a = r_p / (1 - eccentricity);
             let scale = 110 / 35786; 
@@ -508,24 +523,34 @@
             let pxApo = a * (1 + eccentricity) * scale + 45;
             let pxPeri = r_p * scale + 45;
             let semiMajorPx = (pxApo + pxPeri) / 2;
+            let semiMinorPx = semiMajorPx * Math.sqrt(1 - eccentricity * eccentricity);
             let cPx = semiMajorPx - pxPeri; 
 
-            // Draw Orbit Ellipse
+            // Project 3D Inclination onto 2D Canvas
+            let incRad = (inclinationDeg * Math.PI) / 180;
+            let yCompress = Math.cos(incRad);
+
+            sCtx.save();
+            sCtx.translate(cx - cPx, cy);
+            sCtx.scale(1, yCompress);
+
+            // Draw Orbit Track
             sCtx.beginPath();
-            sCtx.ellipse(cx - cPx, cy, semiMajorPx, semiMajorPx * Math.sqrt(1 - eccentricity * eccentricity), 0, 0, Math.PI * 2);
+            sCtx.ellipse(0, 0, semiMajorPx, semiMinorPx, 0, 0, Math.PI * 2);
             sCtx.strokeStyle = inHohmann ? '#9d4edd' : 'rgba(0, 210, 255, 0.5)';
             sCtx.lineWidth = inHohmann ? 2.5 : 1.5;
             sCtx.setLineDash(inHohmann ? [6, 4] : [4, 4]);
             sCtx.stroke();
             sCtx.setLineDash([]);
+            sCtx.restore();
 
-            // Spacecraft Position
+            // Draw Spacecraft Position
             let trueAnomaly = orbitAngle;
             let r_current = (a * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(trueAnomaly));
             let r_px = r_current * scale + 45;
 
             let satX = cx - cPx + r_px * Math.cos(trueAnomaly);
-            let satY = cy + r_px * Math.sin(trueAnomaly);
+            let satY = cy + (r_px * Math.sin(trueAnomaly)) * yCompress;
 
             sCtx.fillStyle = inHohmann ? '#ff9f43' : '#38ef7d';
             sCtx.beginPath();
